@@ -1,10 +1,6 @@
 #! /usr/bin/env python
 
-from .. import device
 from ..SCPI import scpi
-
-
-
 
 class model218(scpi.scpi_family):
     manufacturer = 'Lakeshore'

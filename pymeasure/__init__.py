@@ -1,4 +1,4 @@
 #! /usr/bin/env python
 
-import communicator
-import device
+from communicator import *
+from device import *

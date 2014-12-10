@@ -2,7 +2,7 @@
 
 from .. import device
 
-class scpi_common(device):
+class scpi_common(device.device):
     
     def scpi_accept_address(self):
         """
@@ -12,10 +12,10 @@ class scpi_common(device):
         controller to detect all address-configurable devices (that is, devices
         that implement this command) and assign an IEEE 488.1 address to each of
         those devices. An address-configurable device is detected when the
-        controller has completed a byte-by-byte search of the device's identifier,
-        after which time the address is assigned. The Address Set protocol causes
-        this identifier search to be executed repeatedly until all
-        address-configurable devices have been detected.
+        controller has completed a byte-by-byte search of the device's
+        identifier, after which time the address is assigned. The Address Set
+        protocol causes this identifier search to be executed repeatedly until
+        all address-configurable devices have been detected.
         """
         self.com.send('*AAD')
         return
@@ -49,9 +49,9 @@ class scpi_common(device):
         *DDT : Define Device Trigger Command
         ------------------------------------
         The Define Device Trigger command stores a command sequence that is
-        executed when a group execute trigger (GET), IEEE 488.1 interface message,
-        or *TRG common command is received. The *RST common command shall set the
-        command sequence to a device-defined state.
+        executed when a group execute trigger (GET), IEEE 488.1 interface
+        message, or *TRG common command is received. The *RST common command
+        shall set the command sequence to a device-defined state.
         """
         self.com.send('*DDT')
         return
@@ -114,8 +114,8 @@ class scpi_common(device):
         *EMC? : Enable Macro Query
         --------------------------
         The Enable Macro query allows the programmer to query whether the macros
-        are enabled. A returned value of zero indicates that macros are disabled.
-        A returned value of one indicates that macros are enabled.
+        are enabled. A returned value of zero indicates that macros are
+        disabled. A returned value of one indicates that macros are enabled.
         """
         self.com.send('*EMC?')
         ret = self.com.readline()
@@ -136,8 +136,9 @@ class scpi_common(device):
         """
         *ESE? : Standard Event Status Enable Query
         ------------------------------------------
-        The Standard Event Status Enable query allows the programmer to determine
-        the current contents of the Standard Event Status Enable Register.
+        The Standard Event Status Enable query allows the programmer to
+        determine the current contents of the Standard Event Status Enable
+        Register.
         """
         self.com.send('*ESE?')
         ret = self.com.readline()
@@ -260,8 +261,8 @@ class scpi_common(device):
         ------------------------
         The Pass Control Back command is used by a controller to tell a device,
         being a potential controller, to which address the control is to be
-        passed back when the device (acting as a controller) sends the IEEE 488.1
-        interface message, take control (TCT).
+        passed back when the device (acting as a controller) sends the
+        IEEE 488.1 interface message, take control (TCT).
         """
         self.com.send('*PCB')
         return
@@ -564,12 +565,12 @@ class scpi_common(device):
                   '*SDS': 'scpi_save_default_device_settings'}
 
 
-class scpi_family(device):
+class scpi_family(device.device):
 
     _scpi_enable = 'ALL'
 
     def __init__(self, com):
-        device.__init__(self, com)
+        device.device.__init__(self, com)
         self._scpi = scpi_common(com)
         self._add_scpi_methods()
         
