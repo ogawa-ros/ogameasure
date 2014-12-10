@@ -8,8 +8,8 @@ class ethernet(communicator.communicator):
     method = 'ethernet'
     
     host = ''
-    port = 9999
-    timeout = 0
+    port = 0
+    timeout = 10
     family = ''
     type = ''
     
@@ -48,5 +48,6 @@ class ethernet(communicator.communicator):
     def readline(self):
         ret = self.sockfp.readline()
         return ret
+
 
 
