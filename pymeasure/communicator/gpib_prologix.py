@@ -32,46 +32,46 @@ class gpib_prologix(communicator.communicator):
         return
     
     def send(self, msg):
-        self.com.send(msg)
+        self.com.send(msg+self.terminator)
         self._sleep()
         return
     
     def recv(self, byte):
-        self.send('++read %d\n'%byte)
+        self.send('++read %d'%byte)
         ret = self.com.recv(byte)
         return ret
 
     def readline(self):
-        self.send('++read eoi\n')
+        self.send('++read eoi')
         ret = self.com.readline()
         return ret
     
     def get_info(self):
-        self.send('++ver\n')
+        self.send('++ver')
         ret = self.readline().strip()
         return ret
         
     def set_gpibport(self, gpib):
         self.gpibport = int(gpib)
-        self.send('++addr %d\n'%(self.gpibport))
+        self.send('++addr %d'%(self.gpibport))
         return
 
     def get_gpibport(self):
-        self.send('++addr\n')
+        self.send('++addr')
         ret = int(self.readline().strip())
         return ret
         
     def mode_device(self):
-        self.send('++mode 0\n')
+        self.send('++mode 0')
         self.get_mode()
         return
 
     def mode_controller(self):
-        self.send('++mode 1\n')
+        self.send('++mode 1')
         self.get_mode()
         return
         
     def get_mode(self):
-        self.send('++mode\n')
+        self.send('++mode')
         ret = int(self.readline().strip())
         return ret

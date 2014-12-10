@@ -9,13 +9,13 @@ class ethernet(communicator.communicator):
     
     host = ''
     port = 0
-    timeout = 10
+    timeout = 3
     family = ''
     type = ''
     
-    def __init__(self, host, port, timeout=10,
+    def __init__(self, host, port, timeout=3,
                  family=socket.AF_INET,
-                 type=socket.SOCK_STREAM,):
+                 type=socket.SOCK_STREAM):
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -38,7 +38,7 @@ class ethernet(communicator.communicator):
         return
         
     def send(self, msg):
-        self.sock.send(msg)
+        self.sock.send(msg+self.terminator)
         return
         
     def recv(self, byte=1024):
