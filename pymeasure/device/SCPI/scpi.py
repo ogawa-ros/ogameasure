@@ -576,16 +576,18 @@ class scpi_family(device.device):
         
     def _add_scpi_methods(self):
         sdic = self._scpi._scpi_dict
-        if self._scpi_enable=='ALL': add = sdic.values()
+        if self._scpi_enable=='ALL': add = sdic.items()
         else:
             add = []
             for enable in self._scpi_enable.split(' '):
-                add.append(sdic[enable])
+                add.append([enable, sdic[enable]])
                 continue
             pass
-        for method in add:
+        for call, method in add:
             self.__setattr__(method,
                              self._scpi.__getattribute__(method))
+            shortcut = call.replace('*', '').replace('?', 'Q')
+            self.__setattr__(shortcut, self.__getattribute__(method))
             continue
         return
     
