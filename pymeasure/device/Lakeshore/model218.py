@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import sys
 import datetime
 from ..SCPI import scpi
 
@@ -55,7 +56,7 @@ class model218(scpi.scpi_family):
                        latch_enable))
         return
 
-    def alarm_query(self, ch=1):
+    def alarm_query(self, ch=1, printlog=True):
         """
         ALARM? : Query Input Alarm Parameters
         -------------------------------------
@@ -76,17 +77,58 @@ class model218(scpi.scpi_family):
         low_value = float(ret[3])
         deadband = float(ret[4])
         latch_enable = int(ret[5])
-        print('ALARM? %d'%(ch))
-        print('---------')
-        print('off/on = %d'%(off_on))
-        print('source = %d'%(source))
-        print('high_value = %.3f'%(high_value))
-        print('low_value = %.3f'%(low_value))
-        print('deadband = %.3f'%(deadband))
-        print('latch_enable = %d'%(latch_enable))
+        if printlog:
+            print('ALARM? %d'%(ch))
+            print('---------')
+            print('off/on = %d'%(off_on))
+            print('source = %d'%(source))
+            print('high_value = %.3f'%(high_value))
+            print('low_value = %.3f'%(low_value))
+            print('deadband = %.3f'%(deadband))
+            print('latch_enable = %d'%(latch_enable))
+            print('')
+            pass
         return off_on, source, high_value, low_value, deadband, latch_enable
         
-    def alarm_status_query(self, ch=1):
+    def alarm_query_all(self, printlog=True):
+        """
+        (Helper Method) ALARM? : Query Input Alarm Parameters
+        -----------------------------------------------------
+        Returns the alarm parameters of an input.
+        
+        Returns:
+            off_on, source, high_value, low_value, deadband, latch_enable
+        """
+        off_on = []
+        source = []
+        high_value = []
+        low_value = []
+        deadband = []
+        latch_enable = []
+        for i in range(1, 9):
+            ret = self.alarm_query(i, printlog=False)
+            off_on.append(ret[0])
+            source.append(ret[1])
+            high_value.append(ret[2])
+            low_value.append(ret[3])
+            deadband.append(ret[4])
+            latch_enable.append(ret[5])
+            continue
+        if printlog:
+            sep = ''
+            print('ALARM?')
+            print('------')
+            print('#   : ON/OFF, Sourse,    High,     Low, DeadBand, Latch')
+            for i in range(8):
+                print('ch%d :      %d,      %d, %07.3f, %07.3f,  %07.3f, %d'%
+                      (i+1, off_on[i], source[i], high_value[i], low_value[i],
+                       deadband[i], latch_enable[i]))
+                continue
+            print('')
+            pass
+        return off_on, source, high_value, low_value, deadband, latch_enable
+        
+    def alarm_status_query(self, ch=1, printlog=True):
         """
         ALARMST? : Query Input Alarm Status
         -----------------------------------
@@ -107,10 +149,44 @@ class model218(scpi.scpi_family):
         ret = ret.strip().split(',')
         high_status = int(ret[0])
         low_status = int(ret[1])
-        print('ALARMST? %d'%(ch))
-        print('-----------')
-        print('high_status = %d'%(high_status))
-        print('low_status = %d'%(low_status))
+        if printlog:
+            print('ALARMST? %d'%(ch))
+            print('-----------')
+            print('high_status = %d'%(high_status))
+            print('low_status = %d'%(low_status))
+            print('')
+            pass
+        return high_status, low_status
+    
+    def alarm_status_query_all(self, printlog=True):
+        """
+        (Helper Method) ALARMST? : Query Input Alarm Status
+        ---------------------------------------------------
+        Returns the alarm status of an input.
+        
+        Returns:
+            high_status : Specifies high alarm status.
+                          0 = Unactivated, 1 = Activated
+
+            low_status : Specifies low alarm status.
+                         0 = Unactivated, 1 = Activated
+        """
+        high_status = []
+        low_status = []
+        for i in range(1, 9):
+            ret = self.alarm_status_query(i, printlog=False)
+            high_status.append(ret[0])
+            low_status.append(ret[1])
+            continue
+        if printlog:
+            print('ALARMST?')
+            print('--------')
+            print('#   : High, Low')
+            for i in range(8):
+                print('ch%d :    %d,  %d'%(i+1, high_status[i], low_status[i]))
+                continue
+            print('')
+            pass
         return high_status, low_status
     
     def audible_alarm_set(self, off_on=0):
@@ -142,6 +218,7 @@ class model218(scpi.scpi_family):
         print('ALMB?')
         print('-----')
         print('off_on = %d'%(ret))
+        print('')
         return ret
         
     def alarm_reset(self):
@@ -195,7 +272,7 @@ class model218(scpi.scpi_family):
                        high_value, low_value, manual))
         return
         
-    def alalog_outputs_query(self, ch=1):
+    def analog_outputs_query(self, ch=1, printlog=True):
         """
         ANALOG? : Query Analog Output Parameters
         ----------------------------------------
@@ -216,18 +293,21 @@ class model218(scpi.scpi_family):
         source = int(ret[3])
         high_value = float(ret[4])
         low_value = float(ret[5])
-        manual = int(ret[6])
-        print('ANALOG? %d'%(ch))
-        print('----------')
-        print('bipolar_enable = %d'%(bipolar_enable))
-        print('mode = %d'%(mode))
-        print('monitor_ch = %d'%(monitor_ch))
-        print('source = %d'%(source))
-        print('high_value = %.3f'%(high_value))
-        print('low_value = %.3f'%(low_value))
-        print('manual = %d'%(manual))
+        manual = float(ret[6])
+        if printlog:
+            print('ANALOG? %d'%(ch))
+            print('----------')
+            print('bipolar_enable = %d'%(bipolar_enable))
+            print('mode = %d'%(mode))
+            print('monitor_ch = %d'%(monitor_ch))
+            print('source = %d'%(source))
+            print('high_value = %.3f'%(high_value))
+            print('low_value = %.3f'%(low_value))
+            print('manual = %.3f'%(manual))
+            print('')
+            pass
         return (bipolar_enable, mode, monitor_ch, source, high_value,
-                low_value, manual_value)
+                low_value, manual)
 
     def analog_output_data_query(self, ch=1):
         """
@@ -268,7 +348,7 @@ class model218(scpi.scpi_family):
         Returns:
             bps : 0 = 300, 1 = 1200, 2 = 9600.
         """
-        self.com.send('BAUD?'%(bps))
+        self.com.send('BAUD?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -334,7 +414,7 @@ class model218(scpi.scpi_family):
                       (curve_num, name, SN, format, limit_value, coefficient))
         return
 
-    def curve_header_query(self, curve_num):
+    def curve_header_query(self, curve_num, printlog=True):
         """
         CRVHDR? : Configure Curve Header
         --------------------------------
@@ -348,19 +428,56 @@ class model218(scpi.scpi_family):
         self.com.send('CRVHDR? %d'%(curve_num))
         ret = self.com.readline()
         ret = ret.strip().split(',')
-        name = ret[0]
-        SN = ret[1]
+        name = ret[0].strip()
+        SN = ret[1].strip()
         format = int(ret[2])
         limit_value = float(ret[3])
         coefficient = int(ret[4])
-        latch_enable = int(ret[5])
-        print('CRVHDR? %d'%(ch))
-        print('----------')
-        print('name = %s'%(name))
-        print('SN = %s'%(SN))
-        print('format = %d'%(format))
-        print('limit_value = %.3f'%(limit_value))
-        print('coefficient = %d'%(coefficient))
+        if printlog:
+            print('CRVHDR? %d'%(curve_num))
+            print('----------')
+            print('name = %s'%(name))
+            print('SN = %s'%(SN))
+            print('format = %d'%(format))
+            print('limit_value = %.3f'%(limit_value))
+            print('coefficient = %d'%(coefficient))
+            print('')
+            pass
+        return name, SN, format, limit_value, coefficient
+        
+    def curve_header_query_all(self, printlog=True):
+        """
+        (Helper Method) CRVHDR? : Configure Curve Header
+        ------------------------------------------------
+        
+        Returns:
+            name, SN, format, limit_value, coefficient
+        """
+        name = []
+        SN = []
+        format = []
+        limit_value = []
+        coefficient = []
+        for i in range(1, 10) + range(21, 29):
+            ret = self.curve_header_query(i, printlog=False)
+            name.append(ret[0])
+            SN.append(ret[1])
+            format.append(ret[2])
+            limit_value.append(ret[3])
+            coefficient.append(ret[4])
+            continue
+        if printlog:
+            print('CRVHDR?')
+            print('-------')
+            print('#       : %15s, %10s, %6s, %7s, %5s'%
+                  ('name', 'serial #', 'format', 'limit', 'coeff'))
+            for i, num in enumerate(range(1, 10) + range(21, 29)):
+                print('curve%02d : %15s, %10s, %6d, %7.3f,  %5d'%
+                      (num, name[i], SN[i], format[i], limit_value[i],
+                       coefficient[i]))
+                continue
+            print('')
+            pass
         return name, SN, format, limit_value, coefficient
         
     def curve_point_set(self, curve_num, index, units_value, temp_value):
@@ -430,10 +547,15 @@ class model218(scpi.scpi_family):
             A list of corresponding temperatures in Kelvin for the curve.
             Max length is 200 (first 200 items will be used in excess case).
         """
+        print('uploading...')
         for i,(unit, temp) in enumerate(zip(units_values, temp_values)):
             if i>199: break
+            sys.stdout.write('\r[%-10s] %d/200 %.1f %.1f'%
+                             ('='*int(i/19), i+1, unit, temp))
+            sys.stdout.flush()
             self.curve_point_set(curve_num, i+1, unit, temp)
             continue
+        print('')
         return        
         
     def curve_point_query_line(self, curve_num):
@@ -454,11 +576,16 @@ class model218(scpi.scpi_family):
         """
         unit = []
         temp = []
+        print('downloading...')
         for i in range(200):
             _u, _t = self.curve_point_query(curve_num, i+1)
             unit.append(_u)
             temp.append(_t)
+            sys.stdout.write('\r[%-10s] %d/200 %.1f %.1f'%
+                             ('='*int(i/19), i+1, _u, _t))
+            sys.stdout.flush()
             continue
+        print('')
         return unit, temp
         
     def datetime_set(self, year, month, day, hour, minutes, seconds):
@@ -495,7 +622,7 @@ class model218(scpi.scpi_family):
         --------------------------------------------------
         Configures date and time to current time.        
         """
-        fmt = '%m, %d, %y, %H, %M, %S'
+        fmt = '%m,%d,%y,%H,%M,%S'
         datetime_str = datetime.datetime.now().strftime(fmt)
         self.com.send('DATETIME %s'%(datetime_str))
         return
@@ -511,7 +638,7 @@ class model218(scpi.scpi_family):
         """
         self.com.send('DATETIME?')
         ret = self.com.readline().strip()
-        fmt = '%m, %d, %y, %H, %M, %S'
+        fmt = '%m,%d,%y,%H,%M,%S'
         timestamp = datetime.datetime.strptime(ret, fmt)
         return timestamp
         
@@ -579,7 +706,7 @@ class model218(scpi.scpi_family):
         source = int(ret[1])
         return sensor, source
         
-    def display_field_query_all(self):
+    def display_field_query_all(self, printlog=True):
         """
         (Helper Method) DISPFLD? : Query Display Field
         -----------------------------------------------
@@ -594,6 +721,16 @@ class model218(scpi.scpi_family):
             _se, _so = self.display_field_query(i)
             sensors.append(_se)
             sources.append(_so)
+            continue
+        if printlog:
+            print('DISPFLD?')
+            print('--------')
+            print('#         : %6s, %6s'%('sensor', 'source'))
+            for i in range(8):
+                print('display%02d : %6d, %6d'%(i+1, sensors[i], sources[i]))
+                continue
+            print('')
+            
         return sensors, sources
     
     def filter_set(self, ch, off_on=1, points=5, window=2):
@@ -661,7 +798,7 @@ class model218(scpi.scpi_family):
         window = int(ret[2])
         return off_on, points, window
     
-    def filter_query(self):
+    def filter_query_all(self, printlog=True):
         """
         (Helper Method) FILTER? : Query Input Filter Parameters
         -------------------------------------------------------
@@ -679,17 +816,24 @@ class model218(scpi.scpi_family):
             points.append(_p)
             window.append(_w)
             continue
+        if printlog:
+            print('FILTER?')
+            print('-------')
+            print('#   : %6s, %6s, %6s'%('ON_OFF', 'points', 'window'))
+            for i in range(8):
+                print('ch%d : %6d, %6d, %6d'%
+                      (i+1, off_on[i], points[i], window[i]))
+                continue
+            print('')
+            pass
         return off_on, points, window
     
-    def ieee488_set(self, address, terminator=0, eoi=0):
+    def ieee488_set(self, terminator=0, eoi=0, address=30):
         """
         IEEE : Configure IEEE-488 Interface Parameters
         ----------------------------------------------
         Configures parameters of the IEEE interface.
 
-        < address : int : >
-            Specifies the IEEE address.
-        
         < terminator : int : 0-3 >
             Specifies the terminator.
             0 = <CR><LF>, 1 = <LF><CR>, 2 = <LF>, 3 = no terminator.
@@ -697,6 +841,9 @@ class model218(scpi.scpi_family):
         < eoi : int : 0,1 >
             Disables/enables the EOI mode.
             0 = Enabled, 1 = Disabled. 
+        
+        < address : int : >
+            Specifies the IEEE address.
         """
         self.com.send('IEEE %d, %d, %d'%(terminator, eoi, address))
         return 
@@ -753,7 +900,7 @@ class model218(scpi.scpi_family):
         ret = int(ret)
         return ret
         
-    def input_curve_query_all(self):
+    def input_curve_query_all(self, printlog=True):
         """
         (Helper Method) INCRV? : Query Input Curve Number
         -------------------------------------------------
@@ -763,6 +910,15 @@ class model218(scpi.scpi_family):
             curve_numbers
         """
         curves = [self.input_curve_query(i) for i in range(1, 9)]
+        if printlog:
+            print('INCRV?')
+            print('------')
+            print('#   : %7s'%('curve #'))
+            for i in range(8):
+                print('ch%d : %7d'%(i+1, curves[i]))
+                continue
+            print('')
+            pass
         return curves
     
     def input_control_set(self, ch, off_on):
@@ -798,8 +954,7 @@ class model218(scpi.scpi_family):
         ret = int(ret)
         return ret
 
-
-    def input_control_query_all(self):
+    def input_control_query_all(self, printlog=True):
         """
         (Helper Method) INPUT? : Query Input Control Parameter
         ------------------------------------------------------
@@ -809,6 +964,15 @@ class model218(scpi.scpi_family):
             input_stauts
         """
         status = [self.input_control_query(i) for i in range(1, 9)]
+        if printlog:
+            print('INPUT?')
+            print('------')
+            print('#   : %6s'%('status'))
+            for i in range(8):
+                print('ch%d : %6d'%(i+1, status[i]))
+                continue
+            print('')
+            pass
         return status
 
     def input_type_set(self, group, sensor_type):
@@ -894,7 +1058,7 @@ class model218(scpi.scpi_family):
         if ch!=0: ret = ret[0]
         return ret
         
-    def linear_equation_set(self):
+    def linear_equation_set(self, ch, m, source, b):
         """
         LINEAR : Configure Input Linear Equation Parameters
         ---------------------------------------------------
@@ -938,9 +1102,9 @@ class model218(scpi.scpi_family):
         b = float(ret[2])
         return m, source, b
 
-    def linear_equation_query_all(self):
+    def linear_equation_query_all(self, printlog=True):
         """
-        (Helper Method)LINEAR? : Query Input Linear Equation Parameters
+        (Helper Method) LINEAR? : Query Input Linear Equation Parameters
         ---------------------------------------------------------------
         Returns input linear equation configuration for all ch.
         y = m * x(source) + b
@@ -957,9 +1121,19 @@ class model218(scpi.scpi_family):
             source.append(_s)
             b.append(_b)
             continue
+        if printlog:
+            print('LINEAR?')
+            print('-------')
+            print('#   : %7s, %6s, %7s'%('m', 'source', 'b'))
+            for i in range(8):
+                print('ch%d : %7.3f, %6d, %7.3f'%
+                      (i+1, m[i], source[i], b[i]))
+                continue
+            print('')
+            pass
         return m, source, b
         
-    def lockout_set(self, off_on, code):
+    def lockout_set(self, off_on=0, code=123):
         """
         LOCK : Configure Lock-out and Lock-out Code
         -------------------------------------------
@@ -1031,7 +1205,7 @@ class model218(scpi.scpi_family):
         ret = int(ret)
         return ret
 
-    def logging_records_set(self):
+    def logging_records_set(self, reading_number, ch, source):
         """
         LOGREAD : Configure Log Records
         -------------------------------
@@ -1071,7 +1245,7 @@ class model218(scpi.scpi_family):
         source = int(ret[1])
         return ch, source
 
-    def logging_records_query_all(self):
+    def logging_records_query_all(self, printlog=True):
         """
         (Helper Method) LOGREAD? : Query Log Records
         --------------------------------------------
@@ -1087,6 +1261,16 @@ class model218(scpi.scpi_family):
             ch.append(_c)
             source.append(_s)
             continue
+        if printlog:
+            print('LOGREAD?')
+            print('--------')
+            print('#   : %6s, %6s'%('sensor', 'source'))
+            for i in range(8):
+                print('ch%d : %6d, %6d'%
+                      (i+1, ch[i], source[i]))
+                continue
+            print('')
+            pass
         return ch, source
         
     def logging_parameter_set(self, mode, overwrite, start, period, readings):
@@ -1229,6 +1413,7 @@ class model218(scpi.scpi_family):
             min_value, max_value
         """
         self.com.send('MNMXRDG? %d'%(ch))
+        ret = self.com.readline()
         ret = ret.strip().split(',')
         min_value = float(ret[0])
         max_value = float(ret[1])
@@ -1324,12 +1509,16 @@ class model218(scpi.scpi_family):
             Specifies which relay to configure (1-8).
         
         Returns:
-            status
+            mode, input_alarm, alarm_type
         """
         self.com.send('RELAY? %d'%(relay_number))
         ret = self.com.readline()
-        ret = int(ret)
-        return ret
+        ret = self.com.readline()
+        ret = ret.strip().split(',')
+        mode = int(ret[0])
+        input_alarm = int(ret[1])
+        alarm_type = int(ret[2])
+        return mode, input_alarm, alarm_type
     
     def relay_status_query(self):
         """
@@ -1391,7 +1580,7 @@ class model218(scpi.scpi_family):
                          'ALMBQ': 'audible_alarm_query',
                          'ALMRST': 'alarm_reset',
                          'ANALOG': 'analog_outputs_set',
-                         'ANALOGQ': 'alalog_outputs_query',
+                         'ANALOGQ': 'analog_outputs_query',
                          'AOUTQ': 'analog_output_data_query',
                          'BAUD': 'serial_interface_baud_rate_set',
                          'BAUDQ': 'serial_interface_baud_rate_query',
