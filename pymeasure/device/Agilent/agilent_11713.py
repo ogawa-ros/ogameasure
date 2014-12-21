@@ -352,7 +352,7 @@ class agilent_11713(scpi.scpi_family):
         ret = [int(r) for r in ret.strip().split(',')]
         return ret
         
-    def switch_supply_voltage_set(self, voltage, bank=1):
+    def supply_voltage_set(self, voltage, bank=1):
         """
         :CONFigure:BANKn : Set Supply Voltage
         -------------------------------------
@@ -389,7 +389,7 @@ class agilent_11713(scpi.scpi_family):
         self.com.send('CONFigure:BANK%d %s'%(bank.int, voltage.str))
         return
     
-    def switch_supply_voltage_query(self, bank=1):
+    def supply_voltage_query(self, bank=1):
         """
         :CONFigure:BANKn? : Query Supply Voltage
         -----------------------------------------
@@ -586,10 +586,12 @@ class agilent_11713(scpi.scpi_family):
                          'CLOSeALL': 'switch_close_all',
                          'OPEnQ': 'switch_open_query',
                          'CLOSeQ': 'switch_close_query',  
-                         'BANK': 'switch_supply_voltage_set', 
-                         'BANKQ': 'switch_supply_voltage_query',                       
-                         
-    }
+                         'BANK': 'supply_voltage_set', 
+                         'BANKQ': 'supply_voltage_query',    
+                         'TTL': 'switch_ttl_on_off',
+                         'TTLQ': 'switch_ttl_on_off_query',
+                         'CYClesQ': 'relay_cycles_query',
+                         'RELayCLEAr': 'relay_cycles_clear'}
 
 
 class agilent_11713B(agilent_11713):
