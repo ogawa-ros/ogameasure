@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import time
 from ..SCPI import scpi
 
 # main class
@@ -38,11 +39,16 @@ class E4418(scpi.scpi_family):
         
         Returns
         =======
+        < err_num : int :  >
+            Error number. 0 = 'No Error'
+        
+        < err_msg : str :  >
+            Error message.
         
         Examples
         ========
         >>> p.error_query()
-        
+        (0, 'No error.')
         """
         self.com.send('SYST:ERR?')
         ret = self.com.readline()
@@ -50,6 +56,42 @@ class E4418(scpi.scpi_family):
         err_num = int(ret[0])
         err_msg = ret[1].strip('"')
         return err_num, err_msg
+        
+    def zeroing(self, ch=1):
+        """
+        CALn:ZERO:AUTO : Zeroing
+        ------------------------
+        This command causes the power meter to perform its zeroing routine on
+        the specified channel when ONCE is selected. Zeroing takes
+        approximately 10 seconds. This adjusts the power meter for a zero power
+        reading with no power supplied to the power sensor. The 0|OFF parameter
+        is only required for the query response and is ignored in the command.
+        If 1|ON is selected, it causes the error -224, "Illegal parameter
+        value" to occur.
+        
+        The command assumes that the power sensor is not connected to a power
+        source.
+        
+        Args
+        ====
+        < ch : int : 1,2 >
+            Specify the channel to perform a zeroing. (1, 2)
+            default = 1
+        
+        Returns
+        =======
+        Nothing.
+        
+        Examples
+        ========
+        p.zeroing()
+        p.zeroing(ch=2)
+        """
+        self.com.send('CAL%d:ZERO:AUTO ONCE'%(ch))
+        self._error_check()
+        time.sleep(10)
+        self._error_check()
+        return
         
     
 class EPM441A(E4418):
@@ -156,6 +198,12 @@ class error_handler(object):
                 msg += e.txt + '\n'
                 raise StandardError(msg)
             continue
+        _msg = 'Power meter returned Error message.\n'
+        emsg = '%s (%d)\n'%(msg, num)
+        _msg += '*'*len(emsg) + '\n'
+        _msg += emsg
+        _msg += '*'*len(emsg) + '\n'
+        raise StandardError(_msg)
         return
     
     
