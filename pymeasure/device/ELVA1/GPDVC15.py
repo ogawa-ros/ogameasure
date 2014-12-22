@@ -2,6 +2,7 @@
 
 import sys
 import time
+import socket
 import numpy
 import pymeasure
 from ..SCPI import scpi
@@ -100,20 +101,23 @@ class GPDVC15(scpi.scpi_family):
     def gpib_address_search(self):
         print('GPIB Address Searching...')
         for i in range(31):
-            sys.stdout.write('\r searching %d ... ')
+            sys.stdout.write('\r try address %d ...   '%(i))
             sys.stdout.flush()
             com = pymeasure.gpib_prologix(self.com.com.host, i)
-            com.com.sock.settimeout(0.4)
-            com.send('*IDN?')
             try:
+                com.com.timeout = 1.2
+                com.open()
+                com.send('*IDN?')
                 com.readline()
             except socket.timeout:
-                sys.stdout.write('NG')
+                com.close()
+                sys.stdout.write('\x08\x08NG')
                 sys.stdout.flush()
                 time.sleep(0.1)
                 continue
-            sys.stdout.write('OK\n')
+            sys.stdout.write('\x08\x08OK\n')
             sys.stdout.flush()
+            com.close()
             return i
         return
 
@@ -254,13 +258,12 @@ class GPDVC15(scpi.scpi_family):
         """
         output = self._bias_changer(bias=output)
         self.com.send('PO %s'%(output.hexstr))
+        self.output = output
         return
         
-    def output_query(self):
+    def output_get(self):
         """
-        PO? : Query Output Current
-        --------------------------
-        Query the output current.
+        Get the output current.
         
         Args
         ====
@@ -273,13 +276,10 @@ class GPDVC15(scpi.scpi_family):
         
         Examples
         ========
-        >>> a.output_query()
+        >>> a.output_get()
         10.234
         """
-        self.com.send('PO?')
-        ret = self.com.readline()
-        #output = self._bias_changer(bias=output)
-        return ret
+        return self.output.bias
         
     
 class GPDVC15_100(GPDVC15):
