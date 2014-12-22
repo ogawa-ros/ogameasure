@@ -84,8 +84,8 @@ class E4418(scpi.scpi_family):
         
         Examples
         ========
-        p.zeroing()
-        p.zeroing(ch=2)
+        >>> p.zeroing()
+        >>> p.zeroing(ch=2)
         """
         self.com.send('CAL%d:ZERO:AUTO ONCE'%(ch))
         self._error_check()
@@ -93,9 +93,188 @@ class E4418(scpi.scpi_family):
         self._error_check()
         return
         
+    def measure(self, ch=1, unit='DEF', resolution='DEF', wait=7):
+        """
+        MEASn? : Measuring
+        ------------------
+        This command sets the specified window's measurement function to single
+        channel with relative mode off, aborts, configures the window then
+        initiates channel A or B, calculates the measurement result and places
+        the result on the bus.
+        
+        Args
+        ====
+        < ch : int : 1,2 >
+            Specify the channel to perform a measuring. (1, 2)
+            default = 1            
+        
+        < unit : str : 'DEF','dBm','W' >
+            Specify the units of the returned power level.
+            'DEF', 'dBm', or 'W'. default = 'DEF'
+        
+        < resolution : str, or int : 'DEF',1.0,0.1,0.01,0.001 >
+            Specify the resolution of the returned value.
+            default = 'DEF'
+        
+        Returnes
+        ========
+        < power : float :  >
+            Measured power level. The units is specified by <unit>.
+        
+        Examples
+        ========
+        >>> p.measure()
+        >>> p.measure(ch=2)
+        """
+        self.com.send('MEAS%d? %s, %s'%(ch, unit, resolution))
+        time.sleep(wait)
+        ret = self.com.readline()
+        self._error_check()
+        ret = float(ret.strip())
+        return ret
+    
+    def average_on_off(self, on_off, ch=1):
+        """
+        SENSn:AVER : Set Average ON/OFF
+        -------------------------------
+        This command is used to enable and disable averaging.
+        
+        Args
+        ====
+        < on_off : int or str : 0,1,'ON','OFF' >
+            Specify the averaging status.
+            0 = 'OFF', 1 = 'ON'
+        
+        < ch : int : 1,2 >
+            Specify the channel to set a averaging status. (1, 2)
+            default = 1            
+        
+        Returnes
+        ========
+        Nothing.
+        
+        Examples
+        ========
+        >>> p.average_on_off(1)
+        >>> p.average_on_off('OFF', ch=2)
+        """
+        self.com.send('SENS%d:AVER %s'%(ch, str(on_off)))
+        self._error_check()
+        return
+        
+    def average_on_off_query(self, ch=1):
+        """
+        SENSn:AVER? : Query Average ON/OFF
+        -----------------------------------
+        Check the average status.
+        
+        Args
+        ====
+        < ch : int : 1,2 >
+            Specify the channel to query a averaging status. (1, 2)
+            default = 1            
+        
+        Returnes
+        ========
+        < on_off : int : 1,0 >
+            Average status. 1 = ON, 0 = OFF
+        
+        Examples
+        ========
+        >>> p.average_on_off_query()
+        1
+        
+        >>> p.average_on_off_query(ch=2)
+        0
+        """
+        self.com.send('SENS%d:AVER?'%(ch))
+        ret = self.com.readline()
+        self._error_check()
+        ret = int(ret)
+        return ret
+    
+    def average_count(self, count, ch=1):
+        """
+        SENSn:AVER:COUN : Set Average Count
+        -----------------------------------
+        This command is used to enter a value for the filter length. If
+        [SENSe[1]]|SENSe2:AVERage:COUNt:AUTO is set to ON then entering a value
+        for the filter length automatically sets it to OFF. Increasing the 
+        value of filter length increases measurement accuracy but also
+        increases the time taken to make a power measurement.
+        
+        Entering a value using this command automatically turns the
+        [SENSe[1]]|SENSe2:AVERage:STATe command to ON.
+        
+        Args
+        ====
+        < count : int :  >
+            Specify the count for averaging (filter length).
+        
+        < ch : int : 1,2 >
+            Specify the channel to set a averaging count. (1, 2)
+            default = 1            
+        
+        Returnes
+        ========
+        Nothing.
+        
+        Examples
+        ========
+        >>> p.average_count(128)
+        >>> p.average_count(64, ch=2)
+        """
+        self.com.send('SENS%d:AVER:COUN %d'%(ch, count))
+        self._error_check()
+        return
+        
+    def average_count_query(self, ch=1):
+        """
+        SENSn:AVER:COUN? : Query Average Count
+        ---------------------------------------
+        Check the count for averaging.
+        
+        Args
+        ====
+        < ch : int : 1,2 >
+            Specify the channel to set a averaging count. (1, 2)
+            default = 1            
+        
+        Returnes
+        ========
+        < count : int :  >
+            The count for averaging (filter length).
+                
+        Examples
+        ========
+        >>> p.average_count_query()
+        128
+        
+        >>> p.average_count_query(ch=2)
+        64
+        """
+        self.com.send('SENS%d:AVER:COUN?'%(ch))
+        ret = self.com.readline()
+        self._error_check()
+        ret = int(ret)
+        return ret
+        
+    
+        
     
 class EPM441A(E4418):
-    product_name = 'EPM-4418A'
+    product_name = 'EPM-441A'
+
+class EPM442A(E4418):
+    product_name = 'EPM-442A'
+
+class E4418B(E4418):
+    product_name = 'E4418B'
+
+class E4419B(E4418):
+    product_name = 'E4419B'
+
+
 
 
 # ==============
