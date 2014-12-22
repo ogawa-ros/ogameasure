@@ -34,6 +34,7 @@ class ethernet(communicator.communicator):
 
     def close(self):
         self.sock.close()
+        del(self.sock )
         self.connection = False
         return
         
