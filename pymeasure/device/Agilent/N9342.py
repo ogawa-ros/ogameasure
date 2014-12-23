@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+import time
+import datetime
 import numpy
 from ..SCPI import scpi
 
@@ -74,6 +76,193 @@ class N9342(scpi.scpi_family):
         self._error_check()
         ret = ret.strip().split(',')
         return ret
+        
+    def system_time_set(self, h, m, s):
+        """
+        SYST:TIME : Set System Time
+        ---------------------------
+        Sets the system time of the instrument with <"hhmmss">.
+        Hour must be an integer 0 to 23.
+        Minute must be an integer 0 to 59.
+        Second must be an integer 0 to 59.
+        
+        Args
+        ====
+        < h : int : 0-23 >
+            Hour to set.
+        
+        < m : int : 0-23 >
+            Minute to set.
+        
+        < s : int : 0-23 >
+            Second to set.
+        
+        Returns
+        =======
+        Nothing.
+                
+        Examples
+        ========
+        >>> s.system_time_set(12, 10, 15)
+        """
+        settime = '%02d%02d%02d'%(h, m, s)
+        self.com.send('SYST:TIME "%s"'%(settime))
+        self._error_check()
+        return
+
+    def system_time_query(self):
+        """
+        SYST:TIME? : Query System Time
+        ------------------------------
+        Query the system time of the instrument.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        < h : int : 0-23 >
+            Hours.
+        
+        < m : int : 0-23 >
+            Minutes.
+        
+        < s : int : 0-23 >
+            Seconds.
+                
+        Examples
+        ========
+        >>> s.system_time_query()
+        (12, 10, 15)
+        """
+        self.com.send('SYST:TIME?')
+        ret = self.com.readline()
+        self._error_check()
+        h = int(ret[:2])
+        m = int(ret[2:4])
+        s = int(ret[4:6])
+        return h, m, s
+        
+    def system_date_set(self, y, m, d):
+        """
+        SYST:DATE : Set System Date
+        ---------------------------
+        Sets the system date of the real-time clock of the instrument.
+        Year is a 4-digit integer. Month is an integer 1 to 12. 
+        Day is an integer 1 to 31 (depending on the month)        
+        
+        Args
+        ====
+        < y : int : 0-9999 >
+            Year to set.
+        
+        < m : int : 1-12 >
+            Month to set.
+        
+        < d : int : 1-31 >
+            Day to set.
+        
+        Returns
+        =======
+        Nothing.
+                
+        Examples
+        ========
+        >>> s.system_date_set(2014, 12, 23)
+        """
+        settime = '%04d%02d%02d'%(y, m, d)
+        self.com.send('SYST:DATE "%s"'%(settime))
+        self._error_check()
+        return
+
+    def system_date_query(self):
+        """
+        SYST:DATE? : Query System Date
+        ------------------------------
+        Query the system date of the instrument.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        < y : int : 0-9999 >
+            Year to set.
+        
+        < m : int : 1-12 >
+            Month to set.
+        
+        < d : int : 1-31 >
+            Day to set.
+                
+        Examples
+        ========
+        >>> s.system_date_query()
+        (2014, 12, 23)
+        """
+        self.com.send('SYST:DATE?')
+        ret = self.com.readline()
+        self._error_check()
+        y = int(ret[:4])
+        m = int(ret[4:6])
+        d = int(ret[6:8])
+        return y, m, d
+        
+    def system_datetime_now(self):
+        """
+        SYST:TIME/DATE : (Helper Method) Set System DateTime Now
+        --------------------------------------------------------
+        Set the date and time now.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        Nothing.
+                
+        Examples
+        ========
+        >>> s.system_datetime_now()
+        """
+        Y = int(time.strftime('%Y'))
+        m = int(time.strftime('%m'))
+        d = int(time.strftime('%d'))
+        self.system_date_set(Y, m, d)
+        H = int(time.strftime('%H'))
+        M = int(time.strftime('%M'))
+        S = int(time.strftime('%S'))
+        self.system_time_set(H, M, S)
+        return
+
+    def system_datetime_get(self):
+        """
+        SYST:TIME/DATE : (Helper Method) Get System DateTime Now
+        --------------------------------------------------------
+        Get the date and time.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        < datetime : datetime-object :  >
+            System datetime.
+                
+        Examples
+        ========
+        >>> s.system_datetime_now()
+        """
+        Y, m, d = self.system_date_query()
+        H, M, S = self.system_time_query()
+        fmt = '%Y/%m/%d %H:%M:%S'
+        ret = '%d/%d/%d %d:%d:%d'%(Y, m, d, H, M, S)
+        timestamp = datetime.datetime.strptime(ret, fmt)
+        return timestamp
 
     def trace_data_query(self, ch=1):
         """
