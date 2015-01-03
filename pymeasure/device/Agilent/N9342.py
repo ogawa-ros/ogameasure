@@ -1135,7 +1135,12 @@ g        Returns
         ret = float(ret)
         return ret
             
-        
+    def gen_xaxis(self):
+        start = self.frequency_start_query()
+        stop = self.frequency_stop_query()
+        num = len(self.trace_data_query())
+        xaxis = numpy.linspace(start, stop, num)
+        return xaxis
 
 
 
