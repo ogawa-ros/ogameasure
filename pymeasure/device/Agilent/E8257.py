@@ -11,8 +11,8 @@ class E8257(scpi.scpi_family):
     product_name = 'E8257'
     classification = 'Signal Generator'
     
-    _scpi_enable = '*CLS *ESE *ESE? *ESR? *IDN? *OPC *OPC? *PSC *PSC? *RCL' +\
-                   '*RST *SAV *SRE *SRE? *STB *STB? *TRG *TST? *WAI'
+    _scpi_enable = '*CLS *ESE *ESE? *ESR? *IDN? *OPC *OPC? *PSC? *RCL ' +\
+                   '*RST *SAV *SRE *SRE? *STB? *TST? *WAI'
     
     def _error_check(self):
         #err_num, err_msg = self.error_query()
