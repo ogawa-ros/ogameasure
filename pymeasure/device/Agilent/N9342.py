@@ -939,6 +939,116 @@ g        Returns
         ret = int(ret)
         return ret
         
+    def video_bw_set(self, bw, unit='MHz'):
+        """
+        BAND:VID : Set Video Bandwidth
+        ------------------------------
+        Specifies the video bandwidth.        
+        
+        Args
+        ====
+        < bw : str or float : 10Hz-3MHz >
+            The bandwidth to set.
+            In str : '3 MHz', '10kHz'
+            In float : 10, 3
+                       NOTE: <unit> is referenced as the unit.
+        
+        < unit : str : 'MHz','kHz','Hz'>
+            The unit of the specified <freq>.
+            <unit> is ignored when <freq> is specified with str.
+        
+        
+        Returns
+        =======
+        Nothing.
+                
+        Examples
+        ========
+        >>> s.video_bw_set(3, 'MHz')
+        >>> s.video_bw_set('100Hz')
+        """
+        freq = freq_value(bw, unit)
+        self.com.send('BAND:VID %s'%(freq.query))
+        self._error_check()
+        return
+        
+    def video_bw_query(self):
+        """
+        BAND:VID? : Query Video Bandwidth
+        ---------------------------------
+        Query the video bandwidth.        
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        < bw : float :  >
+            The bandwidth. unit is Hz.
+        
+        Examples
+        ========
+        >>> s.video_bw_query()
+        """
+        self.com.send('BAND:VID?')
+        ret = self.com.readline()
+        self._error_check()
+        ret = float(ret)
+        return ret
+
+    def video_bw_auto_set(self, auto):
+        """
+        BAND:VID:AUTO : Set Video Bandwidth AUTO/MANUAL
+        -----------------------------------------------
+        This command turns on/off auto video bandwidth state.
+        
+        Args
+        ====
+        < auto : int or str : 0,1,'OFF','ON' >
+            The resolution BW state to set. 
+            0 = 'OFF', 1 = 'ON'
+        
+        Returns
+        =======
+        Nothing.
+                
+        Examples
+        ========
+        >>> s.video_bw_auto_set(0)
+        >>> s.video_bw_auto_set('ON')
+        """
+        self.com.send('BAND:VID:AUTO %s'%(str(auto)))
+        self._error_check()
+        return
+        
+    def video_bw_auto_query(self):
+        """
+        BAND:AUTO? : Query Video Bandwidth AUTO/MANUAL
+        ----------------------------------------------
+        Query the AUTO status of the Video BW.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        < auto : int or str : 0,1,'OFF','ON' >
+            The resolution BW state. 
+            0 = 'OFF', 1 = 'ON'
+        
+        Examples
+        ========
+        >>> s.resolution_bw_auto_query()
+        1
+        """
+        self.com.send('BAND:VID:AUTO?')
+        ret = self.com.readline()
+        self._error_check()
+        ret = int(ret)
+        return ret
+    
     def average_set(self, num, ch=1):
         """
         AVER:TRACn:COUN : Set Average Number
