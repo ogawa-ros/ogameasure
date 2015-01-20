@@ -25,16 +25,18 @@ class ethernet(communicator.communicator):
     
     def open(self):
         #print('open', self.host, self.port) 
-        self.sock = socket.socket(self.family, self.type)
-        self.sock.settimeout(self.timeout)
-        self.sock.connect((self.host, self.port))
-        self.sockfp = self.sock.makefile()
-        self.connection = True
+        if self.connection == False:
+            self.sock = socket.socket(self.family, self.type)
+            self.sock.settimeout(self.timeout)
+            self.sock.connect((self.host, self.port))
+            self.sockfp = self.sock.makefile()
+            self.connection = True
+            pass
         return
 
     def close(self):
         self.sock.close()
-        del(self.sock )
+        del(self.sock)
         self.connection = False
         return
         
