@@ -7,6 +7,8 @@ import ethernet
 class gpib_prologix(communicator.communicator):
     method ='gpib_prologix'
     
+    open_flag = False
+    
     host = ''
     gpibport = 10
     lag = 0.02
@@ -25,8 +27,11 @@ class gpib_prologix(communicator.communicator):
         return
         
     def open(self):
-        self.com.open()
-        self.mode_controller()
+        if self.open_flag == False:
+            self.com.open()
+            self.mode_controller()
+            self.open_flag = True
+            pass
         return
         
     def close(self):
