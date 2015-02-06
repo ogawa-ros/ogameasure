@@ -69,6 +69,7 @@ class FSW0000(scpi.scpi_family):
         self.com.send('FREQ?')
         ret = self.com.readline()
         ret = float(ret)
+        ret = ret / 1000.
         return ret
         
     def power_set(self, pow, unit='dBm'):
@@ -216,7 +217,9 @@ class FSW0000(scpi.scpi_family):
         """
         self.com.send('OUTP:STAT?')
         ret = self.com.readline()
-        ret = int(ret)
+        if ret.upper().find('ON') != -1: ret = 1
+        elif ret.upper().find('OFF') != -1: ret = 0
+        else: ret = -1
         return ret
     
 
