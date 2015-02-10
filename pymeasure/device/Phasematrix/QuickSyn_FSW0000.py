@@ -222,7 +222,20 @@ class FSW0000(scpi.scpi_family):
         else: ret = -1
         return ret
     
-
+    def use_internal_reference_source(self):
+        self.com.send('ROSC:SOUR INT')
+        return
+    
+    def use_external_reference_source(self):
+        self.com.send('ROSC:SOUR EXT')
+        return
+        
+    def reference_source_query():
+        self.com.send('ROSC:SOUR?')
+        ret = self.com.readline().strip()
+        return ret
+    
+    
 
 class FSW0010(FSW0000):
     product_name = 'FSW-0010'
