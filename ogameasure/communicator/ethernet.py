@@ -41,7 +41,7 @@ class ethernet(communicator.communicator):
         return
         
     def send(self, msg):
-        self.sock.send(msg+self.terminator)
+        self.sock.send((msg+self.terminator).encode())
         return
         
     def recv(self, byte=1024):
