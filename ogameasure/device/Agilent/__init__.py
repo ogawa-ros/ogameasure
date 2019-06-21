@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 # Signal Generator
 # ----------------
 from .E8257 import E8257D

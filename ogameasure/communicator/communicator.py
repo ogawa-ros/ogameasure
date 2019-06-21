@@ -1,6 +1,3 @@
-#! /usr/bin/env python
-
-
 class communicator(object):
     method = 'communicator_base_class'
     connection = False

@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import sys
 import datetime
 from ..SCPI import scpi

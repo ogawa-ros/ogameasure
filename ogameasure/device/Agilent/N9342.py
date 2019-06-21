@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import time
 import datetime
 import numpy

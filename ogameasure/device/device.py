@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 class device(object):
     manufacturer = ''
     product_name = ''

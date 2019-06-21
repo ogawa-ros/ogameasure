@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 from .SCPI import scpi_common
 
 from . import Agilent

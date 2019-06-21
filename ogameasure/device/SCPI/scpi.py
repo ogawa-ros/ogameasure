@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 from .. import device
 
 class scpi_common(device.device):
