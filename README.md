@@ -1,2 +1,2 @@
-pymeasure2
+ogameasure
 ==========
