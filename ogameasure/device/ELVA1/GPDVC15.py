@@ -4,7 +4,7 @@ import sys
 import time
 import socket
 import numpy
-import pymeasure
+import ogameasure
 from ..SCPI import scpi
 
 

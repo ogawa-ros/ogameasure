@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-from SCPI import scpi_common
+from .SCPI import scpi_common
 
-import Agilent
-import Agilent as Keysight
-import Phasematrix
-import Lakeshore
-import ELVA1
+from . import Agilent
+from . import Agilent as Keysight
+from . import Phasematrix
+from . import Lakeshore
+from . import ELVA1
 
