@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import socket
-import communicator
+from . import communicator
 
 
 class ethernet(communicator.communicator):

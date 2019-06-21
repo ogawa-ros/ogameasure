@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
 import time
-import communicator
-import ethernet
+from . import communicator
+from . import ethernet
 
 class gpib_prologix(communicator.communicator):
     method ='gpib_prologix'
