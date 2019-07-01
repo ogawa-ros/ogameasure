@@ -6,36 +6,47 @@ import sys, time, pymeasure, rospy, std_msgs, serial
 class device(object):
 
     def __init__(self):
-        self.tpg261 = serial.Serial("/dev/ttyUSB1",timeout=1)
+        self.tpg261 = serial.Serial("/dev/ttyUSB0",timeout=1)
 
     def pressure(self):
-         self.tpg261.write(b"PR1 \r\n")
-         time.sleep(0.3)
-         self.tpg261.write(b"\x05")
-         time.sleep(0.3)
-         self.raw_p = self.tpg261.readline()
-         pressure = str(self.raw_p[2:13])
-         pressure = pressure.strip("b'")
-         return pressure
+        self.tpg261.write(b"PR1 \r\n")
+        time.sleep(0.3)
+        self.tpg261.write(b"\x05")
+        time.sleep(0.3)
+        self.raw_p = self.tpg261.readline()
+        pressure = str(self.raw_p[2:13])
+        pressure = pressure.strip("b'")
+        return pressure
 
     def status(self):
-         status_p = self.raw_p[0:1]
-            if status_p == 0 :
-                print('Measurement data okay')
-            elif status_p == 1 :
-                print('Underrange')
-            elif status_p == 2 :
-                print('Overrange')
-            elif status_p == 3 :
-                print('Sensor error')
-            elif status_p == 4 :
-                print('Sensor off (IKR, PKR, IMR, PBR)')
-            elif status_p == 5 :
-                print('No sensor')
-            else :
-                print('Identification error')
+        self.tpg261.write(b"SEN , 0, 0 \r\n")
+        time.sleep(0.3)
+        self.tpg261.write(b"\x05")
+        time.sleep(0.3)
+        self.get = self.tpg261.readline()
+        status_p = self.get[0:1]
+        if status_p == 0 :
+            print('Measurement data okay')
+        elif status_p == 1 :
+            print('Underrange')
+        elif status_p == 2 :
+            print('Overrange')
+        elif status_p == 3 :
+            print('Sensor error')
+        elif status_p == 4 :
+            print('Sensor off (IKR, PKR, IMR, PBR)')
+        elif status_p == 5 :
+            print('No sensor')
+        else :
+             print('Identification error')
 
     def check(self):
+        self.tpg261.write(b"PR1 \r\n")
+        time.sleep(0.3)
+        self.tpg261.write(b"\x05")
+        time.sleep(0.3)
+        self.raw_p = self.tpg261.readline()
+        status_p = self.raw_p[0:1]
         if self.raw_p == b'\x06\r\n' :
             print('something error')
         else:
