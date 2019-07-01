@@ -6,7 +6,7 @@ import time
 class ma2437a(scpi.scpi_family):
 
     def __init__(self, com, ch=1, resolution=3):
-        scpi.scpi_family.__init__(self, com)
+
         for i in range(ch):
             self.com.send('CHUNIT %d, DBM' %(i))
             self.com.send('CHRES %d, %d' %(i, resolution))
