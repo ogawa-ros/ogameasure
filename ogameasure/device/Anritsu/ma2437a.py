@@ -32,7 +32,7 @@ class ma2437a(scpi.scpi_family):
         1. power: the power value [dBm]
             Type: float
         '''
-        self.com.send('o %d' %(ch))
+        self.com.send('O %d' %(ch))
         ret = self.com.readline()
         power = float(ret)
         return power
