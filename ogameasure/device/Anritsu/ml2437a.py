@@ -5,7 +5,7 @@ from ..SCPI import scpi
 
 class ma2437a(scpi.scpi_family):
 
-    def init_setting(self, ch = 1):
+    def initilize(self, ch = 1):
 
         for i in range(ch):
             self.com.send('CHUNIT %d, DBM' %(i))
@@ -69,7 +69,7 @@ class ma2437a(scpi.scpi_family):
             self.com.send('AVG %s, OFF, 60' %(sensor))
         return
 
-    def query_average_onoff(self,ch=1):
+    def query_average_mode(self,ch=1):
 
         '''
         DESCRIPTION
