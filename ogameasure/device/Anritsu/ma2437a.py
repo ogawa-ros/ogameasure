@@ -11,6 +11,12 @@ class ma2437a(scpi.scpi_family):
             self.com.send('CHUNIT %d, DBM' %(i))
             self.com.send('CHRES %d, %d' %(i, resolution))
 
+    def check(self, ch = 1):
+
+        self.com.send('ON %d' %(ch))
+        ret = self.com.readline()
+        mode = float(ret)
+        return mode
 
     def measure(self, ch=1, resolution=3):
         '''
