@@ -148,7 +148,7 @@ class ma2437a(scpi.scpi_family):
         1. count: averaging counts
             Type: int
         '''
-        self.com.send(b'STATUS')
+        self.com.send('STATUS')
         if ch ==1:
             ret = self.com.readline()
             count = int(ret[19:23])
