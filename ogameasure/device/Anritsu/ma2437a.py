@@ -6,7 +6,7 @@ from ..SCPI import scpi
 class ma2437a(scpi.scpi_family):
 
     def __init__(self):
-
+        ch = 1
         for i in range(ch):
             self.com.send(b'CHUNIT %d, DBM' %(i))
             self.com.send(b'CHRES %d, %d' %(i, resolution))
