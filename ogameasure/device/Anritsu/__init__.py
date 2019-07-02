@@ -1,3 +1,3 @@
 # Power Meter
 # -----------
-from .ma2437a import ma2437a
+from .ml2437a import ml2437a
