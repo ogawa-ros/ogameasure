@@ -58,9 +58,9 @@ class ma2437a(scpi.scpi_family):
         '''
 
         if onoff == 1:
-            self.com.send('AVG %s, RPT, 60' %(sensor))
+            self.com.send(b'AVG %s, RPT, 60' %(sensor))
         else:
-            self.com.send('AVG %s, OFF, 60' %(sensor))
+            self.com.send(b'AVG %s, OFF, 60' %(sensor))
         return
 
     def query_average_onoff(self,ch=1):
@@ -82,7 +82,7 @@ class ma2437a(scpi.scpi_family):
             Type: string
         '''
 
-        self.com.send('STATUS')
+        self.com.send('bSTATUS')
         ret = self.com.readline()
         if ch == 1:
             if ret[17] == '0':
@@ -128,7 +128,7 @@ class ma2437a(scpi.scpi_family):
         Nothing.
         '''
 
-        self.com.send('AVG %s, RPT, %d' %(sensor, count))
+        self.com.send(b'AVG %s, RPT, %d' %(sensor, count))
 
         return
 
@@ -148,7 +148,7 @@ class ma2437a(scpi.scpi_family):
         1. count: averaging counts
             Type: int
         '''
-        self.com.send('STATUS')
+        self.com.send(b'STATUS')
         if ch ==1:
             ret = self.com.readline()
             count = int(ret[19:23])
