@@ -3,7 +3,7 @@
 import time
 from ..SCPI import scpi
 
-class ma2437a(scpi.scpi_family):
+class ml2437a(scpi.scpi_family):
 
     def initilize(self, ch = 1):
 
