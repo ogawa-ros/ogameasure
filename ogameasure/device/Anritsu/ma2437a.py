@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import time
-
+from ..SCPI import scpi
 
 class ma2437a(scpi.scpi_family):
 
