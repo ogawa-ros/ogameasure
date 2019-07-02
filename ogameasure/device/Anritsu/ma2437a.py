@@ -32,7 +32,7 @@ class ma2437a(scpi.scpi_family):
         1. power: the power value [dBm]
             Type: float
         '''
-        self.com.send('o %d' %(ch))
+        self.com.send(b'o %d' %(ch))
         ret = self.com.readline()
         power = float(ret)
         return power
@@ -82,7 +82,7 @@ class ma2437a(scpi.scpi_family):
             Type: string
         '''
 
-        self.com.send('bSTATUS')
+        self.com.send(b'STATUS')
         ret = self.com.readline()
         if ch == 1:
             if ret[17] == '0':
