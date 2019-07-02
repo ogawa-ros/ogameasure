@@ -8,8 +8,8 @@ class ma2437a(scpi.scpi_family):
     def init_setting(self, ch = 1):
 
         for i in range(ch):
-            self.com.send(b'CHUNIT %d, DBM' %(i))
-            self.com.send(b'CHRES %d, %d' %(i, resolution))
+            self.com.send('CHUNIT %d, DBM' %(i))
+            self.com.send('CHRES %d, %d' %(i, resolution))
 
 
     def measure(self, ch=1, resolution=3):
@@ -58,9 +58,9 @@ class ma2437a(scpi.scpi_family):
         '''
 
         if onoff == 1:
-            self.com.send(b'AVG %s, RPT, 60' %(sensor))
+            self.com.send('AVG %s, RPT, 60' %(sensor))
         else:
-            self.com.send(b'AVG %s, OFF, 60' %(sensor))
+            self.com.send('AVG %s, OFF, 60' %(sensor))
         return
 
     def query_average_onoff(self,ch=1):
@@ -82,7 +82,7 @@ class ma2437a(scpi.scpi_family):
             Type: string
         '''
 
-        self.com.send(b'STATUS')
+        self.com.send('STATUS')
         ret = self.com.readline()
         if ch == 1:
             if ret[17] == '0':
@@ -128,7 +128,7 @@ class ma2437a(scpi.scpi_family):
         Nothing.
         '''
 
-        self.com.send(b'AVG %s, RPT, %d' %(sensor, count))
+        self.com.send('AVG %s, RPT, %d' %(sensor, count))
 
         return
 
