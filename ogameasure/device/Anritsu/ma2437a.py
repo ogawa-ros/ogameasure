@@ -13,7 +13,7 @@ class ma2437a(scpi.scpi_family):
 
     def check(self, ch = 1):
 
-        self.com.send('ON %d' %(ch))
+        self.com.send('o %d' %(ch))
         ret = self.com.readline()
         mode = float(ret)
         return mode
