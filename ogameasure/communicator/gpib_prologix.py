@@ -38,7 +38,7 @@ class gpib_prologix(communicator.communicator):
 
     def send(self, msg):
         self.use_gpibport()
-        self.com.send((msg+self.terminator).encord())
+        self.com.send((msg+self.terminator))
         self._sleep()
         return
 
