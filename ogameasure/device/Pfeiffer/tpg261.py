@@ -4,11 +4,10 @@ import time
 
 class tpg261():
 
-    manufacturer = ''
-    product_name = ''
-    classification = ''
+#    manufacturer = ''
+#    product_name = ''
+#    classification = ''
     com = None
-    _shortcut_command = {}
     
     def __init__(self, com):
         self.com = com
@@ -20,17 +19,17 @@ class tpg261():
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_p = com.recv()
+        self.raw_p = self.com.recv()
         pressure = str(self.raw_p[2:13])
         pressure = pressure.strip("b'")
         return pressure
 
     def status(self):
-        self.tpg261.write(b"SEN , 0, 0 \r\n")
+        self.com.send(b"SEN , 0, 0 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.get = self.tpg261.readline()
+        self.get = self.com.recv()
         status_p = self.get[0:1]
         if status_p == 0 :
             print('Measurement data okay')
@@ -48,11 +47,11 @@ class tpg261():
              print('Identification error')
 
     def check(self):
-        self.tpg261.write(b"PR1 \r\n")
+        self.com.send(b"PR1 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_p = self.tpg261.readline()
+        self.raw_p = self.com.recv()
         status_p = self.raw_p[0:1]
         if self.raw_p == b'\x06\r\n' :
             print('something error')
@@ -60,73 +59,73 @@ class tpg261():
             print('no problem')
 
     def gauge_query(self):
-        self.tpg261.write(b"SEN , 0, 0 \r\n")
+        self.com.send(b"SEN , 0, 0 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.get = self.tpg261.readline()
+        self.get = self.com.recv()
         status1_g = self.get[0:1]
         status2_g = self.get[2:3]
 
     def gauge1_check(self):
-        status1_g = self.get[0:1]
+        status1_g = self.recv[0:1]
         return status1_g
 
     def gauge2_check(self):
-        status2_g = self.get[2:3]
+        status2_g = self.recv[2:3]
         return status2_g
 
     def gauge_change_1(self):
-        self.tpg261.write(b"SEN , 2 , 1 \r\n")
+        self.com.send(b"SEN , 2 , 1 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.get = self.tpg261.readline()
+        self.get = self.com.recv()
         status1_g = self.get[0:1]
         status2_g = self.get[2:3]
 
     def gauge_change_2(self):
-        self.tpg261.write(b"SEN , 1 , 2 \r\n")
+        self.com.send(b"SEN , 1 , 2 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.get = self.tpg261.readline()
+        self.get = self.com.recv()
         status1_g = self.get[0:1]
         status2_g = self.get[2:3]
 
     def gauge_change_Off1_2(self):
-        self.tpg261.write(b"SEN , 1 , 1 \r\n")
+        self.com.send(b"SEN , 1 , 1 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.get = self.tpg261.readline()
+        self.get = self.com.recv()
         status1_g = self.get[0:1]
         status2_g = self.get[2:3]
 
     def pres_unit_bar(self):
-        self.tpg261.write(b"UNI,0 \r\n")
+        self.com.send(b"UNI,0 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_bar = self.tpg261.readline()
+        self.raw_bar = self.com.recv()
         unit = self.raw_bar[0:1]
         return unit
 
     def pres_unit_torr(self):
-        self.tpg261.write(b"UNI,1 \r\n")
+        self.com.send(b"UNI,1 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_torr = self.tpg261.readline()
+        self.raw_torr = self.com.recv()
         unit = self.raw_torr[0:1]
         return unit
 
     def pres_unit_pa(self):
-        self.tpg261.write(b"UNI,2 \r\n")
+        self.com.send(b"UNI,2 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_pa = self.tpg261.readline()
+        self.raw_pa = self.com.recv()
         unit = self.raw_pa[0:1]
         return unit
 
