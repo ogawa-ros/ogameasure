@@ -11,7 +11,6 @@ class tpg261():
     _shortcut_command = {}
     
     def __init__(self, com):
-        def __init__(self, com):
         self.com = com
         self.com.open()
         pass
