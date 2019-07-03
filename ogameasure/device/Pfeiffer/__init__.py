@@ -1,4 +1,4 @@
 # tpg261 Driver
 # -----------------
-from .tpg261_device import device
+from .tpg261 import tpg261
 

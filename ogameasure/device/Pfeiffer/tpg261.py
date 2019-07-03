@@ -1,19 +1,27 @@
 #! /usr/bin/env python3
 
-import sys, time, pymeasure, rospy, std_msgs, serial
+import time
 
+class tpg261():
 
-class device(object):
-
-    def __init__(self):
-        self.tpg261 = serial.Serial("/dev/ttyUSB0",timeout=1)
+    manufacturer = ''
+    product_name = ''
+    classification = ''
+    com = None
+    _shortcut_command = {}
+    
+    def __init__(self, com):
+        def __init__(self, com):
+        self.com = com
+        self.com.open()
+        pass
 
     def pressure(self):
-        self.tpg261.write(b"PR1 \r\n")
+        self.com.send(b"PR1 \r\n")
         time.sleep(0.3)
-        self.tpg261.write(b"\x05")
+        self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_p = self.tpg261.readline()
+        self.raw_p = com.recv()
         pressure = str(self.raw_p[2:13])
         pressure = pressure.strip("b'")
         return pressure
