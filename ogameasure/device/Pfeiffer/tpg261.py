@@ -20,87 +20,79 @@ class tpg261():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_p = self.com.recv()
-        pressure = str(self.raw_p[2:13])
+        pressure = str(self.raw_p[5:16])
         pressure = pressure.strip("b'")
         return pressure
 
-    def status(self):
-        self.com.send(b"SEN , 0, 0 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status_p = self.get[0:1]
-        if status_p == 0 :
-            print('Measurement data okay')
-        elif status_p == 1 :
-            print('Underrange')
-        elif status_p == 2 :
-            print('Overrange')
-        elif status_p == 3 :
-            print('Sensor error')
-        elif status_p == 4 :
-            print('Sensor off (IKR, PKR, IMR, PBR)')
-        elif status_p == 5 :
-            print('No sensor')
-        else :
-             print('Identification error')
-
-    def check(self):
+    def tpg_status(self):
         self.com.send(b"PR1 \r\n")
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_p = self.com.recv()
-        status_p = self.raw_p[0:1]
-        if self.raw_p == b'\x06\r\n' :
-            print('something error')
-        else:
-            print('no problem')
+        self.get = self.com.recv()
+        status_p = self.get[3:4]
+        if status_p == b'0' :
+            print('Measurement data okay')
+        elif status_p == b'1' :
+            print('Underrange')
+        elif status_p == b'2' :
+            print('Overrange')
+        elif status_p == b'3' :
+            print('Sensor error')
+        elif status_p == b'4' :
+            print('Sensor off (IKR, PKR, IMR, PBR)')
+        elif status_p == b'5' :
+            print('No sensor')
+        else :
+             print('Identification error')
 
-    def gauge_query(self):
+    def turn_status_g1(self):
         self.com.send(b"SEN , 0, 0 \r\n")
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.get = self.com.recv()
-        status1_g = self.get[0:1]
-        status2_g = self.get[2:3]
+        status1_g = self.get[3:4]
+        if status1_g == b'0' : 
+            print('Gauge cannot be turned on/off')
+        elif status1_g == b'1' :
+            print('Gauge turned off')
+        elif status1_g == b'2' :
+            print('Gauge turned on')
+        else :
+            pass
 
-    def gauge1_check(self):
-        status1_g = self.recv[0:1]
-        return status1_g
-
-    def gauge2_check(self):
-        status2_g = self.recv[2:3]
-        return status2_g
-
-    def gauge_change_1(self):
-        self.com.send(b"SEN , 2 , 1 \r\n")
+    def gauge_on_g1(self):
+        self.com.send(b"SEN , 2 , 0 \r\n")
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.get = self.com.recv()
-        status1_g = self.get[0:1]
-        status2_g = self.get[2:3]
+        status1_g = self.get[3:4]
+        if status1_g == b'0' :
+            print('Gauge cannot be turned on/off')
+        elif status1_g == b'1' :
+            print('Gauge turned off')
+        elif status1_g == b'2' :
+            print('Gauge turned on')
+        else :
+            pass
 
-    def gauge_change_2(self):
-        self.com.send(b"SEN , 1 , 2 \r\n")
+    def gauge_off_g1(self):
+        self.com.send(b"SEN , 1 , 0 \r\n")
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.get = self.com.recv()
-        status1_g = self.get[0:1]
-        status2_g = self.get[2:3]
-
-    def gauge_change_Off1_2(self):
-        self.com.send(b"SEN , 1 , 1 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status1_g = self.get[0:1]
-        status2_g = self.get[2:3]
+        status1_g = self.get[3:4]
+        if status1_g == b'0' :
+            print('Gauge cannot be turned on/off')
+        elif status1_g == b'1' :
+            print('Gauge turned off')
+        elif status1_g == b'2' :
+            print('Gauge turned on')
+        else :
+            pass
 
     def pres_unit_bar(self):
         self.com.send(b"UNI,0 \r\n")
@@ -108,7 +100,7 @@ class tpg261():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_bar = self.com.recv()
-        unit = self.raw_bar[0:1]
+        unit = self.raw_bar[3:4]
         return unit
 
     def pres_unit_torr(self):
@@ -117,7 +109,7 @@ class tpg261():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_torr = self.com.recv()
-        unit = self.raw_torr[0:1]
+        unit = self.raw_torr[3:4]
         return unit
 
     def pres_unit_pa(self):
@@ -126,20 +118,20 @@ class tpg261():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_pa = self.com.recv()
-        unit = self.raw_pa[0:1]
+        unit = self.raw_pa[3:4]
         return unit
 
 '''
  def pressure_both(self):
-         self.tpg261.write(b"PRX \r\n")
+         self.com.send(b"PRX \r\n")
          time.sleep(0.3)
-         self.tpg261.write(b"\x05")
+         self.com.send(b"\x05")
          time.sleep(0.3)
-         rawb = self.tpg261.readline()
-         status1 = rawb[0:1]
-         status2 = rawb[14:15]
-         pressure1 = str(raw2[2:13])
-         pressure2 = str(raw2[16:27])
+         rawb = self.com.recv()
+         status1 = rawb[3:4]
+         status2 = rawb[6:16]
+         pressure1 = str(raw2[17:18])
+         pressure2 = str(raw2[18:30])
 
 
     def gauge_change_1(self):
@@ -183,4 +175,52 @@ class tpg261():
         time.sleep(0.3)
         get = self.tpg261.readline()
         status = str(get[0:4])
+
+    def turn_status2(self):
+        self.com.send(b"SEN , 0, 0 \r\n")
+        time.sleep(0.3)
+        self.com.send(b"\x05")
+        time.sleep(0.3)
+        self.raw_p = self.com.recv()
+        gauge1 = self.raw_p[5:6]
+        if gauge1 == b'0' :
+            print('Gauge cannot be turned on/off')
+        elif gauge1 == b'1' :
+            print('Gauge turned off')
+        elif gauge1 == b'2' :
+            print('Gauge turned on')
+        else :
+            pass
+
+    def gauge_on_g2(self):
+        self.com.send(b"SEN , 0 , 2 \r\n")
+        time.sleep(0.3)
+        self.com.send(b"\x05")
+        time.sleep(0.3)
+        self.get = self.com.recv()
+        status1_g = self.get[5:6]
+        if status1_g == b'0' :
+            print('Gauge cannot be turned on/off')
+        elif status1_g == b'1' :
+            print('Gauge turned off')
+        elif status1_g == b'2' :
+            print('Gauge turned on')
+        else :
+            pass
+
+    def gauge_off_g2(self):
+        self.com.send(b"SEN , 0 , 1 \r\n")
+        time.sleep(0.3)
+        self.com.send(b"\x05")
+        time.sleep(0.3)
+        self.get = self.com.recv()
+        status1_g = self.get[5:6]
+        if status1_g == b'0' :
+            print('Gauge cannot be turned on/off')
+        elif status1_g == b'1' :
+            print('Gauge turned off')
+        elif status1_g == b'2' :
+            print('Gauge turned on')
+        else :
+
 '''
