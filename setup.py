@@ -14,6 +14,8 @@ setuptools.setup(
         'ogameasure.communicator',
         'ogameasure.device',
         'ogameasure.device.Agilent',
+        'ogameasure.device.Anritsu'
+        'ogameasure.device.Pfeiffer'
         'ogameasure.device.Lakeshore',
         'ogameasure.device.SCPI',
         'ogameasure.device.ELVA1',
