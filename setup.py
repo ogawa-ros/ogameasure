@@ -11,6 +11,14 @@ setuptools.setup(
     keywords = '',
     packages = [
         'ogameasure',
+        'ogameasure.communicator',
+        'ogameasure.device',
+        'ogameasure.device.Agilent',
+        'ogameasure.device.Lakeshore',
+        'ogameasure.device.SCPI',
+        'ogameasure.device.ELVA1',
+        'ogameasure.device.Phasematrix',
+        'ogameasure.interface',
     ],
     classifiers=[
         'Operating System :: POSIX :: Linux',
