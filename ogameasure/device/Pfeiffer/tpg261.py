@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import time
+import numpy as np
 
 class tpg261():
 
@@ -20,7 +21,7 @@ class tpg261():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_p = self.com.recv()
-        pressure = str(self.raw_p[5:16])
+        pressure = np.float64(self.raw_p[5:16])
         pressure = pressure.strip("b'")
         return pressure
 
