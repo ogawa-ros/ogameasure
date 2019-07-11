@@ -10,10 +10,12 @@ class model218(scpi.scpi_family):
     _scpi_enable = '*CLS *ESE *ESE? *ESR? *IDN? *OPC *OPC? *RST *SRE ' \
                    + '*SRE? *STB? *TST? *WAI'
 
+    """
     def __init__(self, com):
         scpi.scpi_family.__init__(self, com)
         self.com.com.readline()
         pass
+    """
 
     def alarm_set(self, ch=1, off_on=1, source=1, high_value=300,
                   low_value=100, deadband=1, latch_enable=0):
