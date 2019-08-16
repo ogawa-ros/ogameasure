@@ -34,6 +34,7 @@ class gpib_prologix(communicator.communicator):
 
     def close(self):
         self.com.close()
+        self.open_flag = False
         return
 
     def send(self, msg):
