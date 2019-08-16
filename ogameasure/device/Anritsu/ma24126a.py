@@ -3,7 +3,7 @@ import time,sys,os
 import math
 import datetime
 
-class ma24126a(self):
+class ma24126a(object):
 
     rtimeout = 0.1
     wtimeout = 0.1
