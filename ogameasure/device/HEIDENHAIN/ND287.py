@@ -74,9 +74,6 @@ class ND287(object):
         else:
             pass
 
-        number of the currently installed software
-        Version number of the currently installed software
-
     def output_device_identification(self):
         """
         Return
