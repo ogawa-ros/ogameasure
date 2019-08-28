@@ -21,7 +21,7 @@ class ND287(object):
         res = self._enc.readline()
         return res
 
-    def quary(self,cmd,wt=0.001):
+    def query(self,cmd,wt=0.001):
         self.write(cmd)
         time.sleep(wt)
         ret = self.read()
