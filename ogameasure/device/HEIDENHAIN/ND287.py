@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 import serial
 import time,sys,os
 import math
@@ -48,7 +49,7 @@ class ND287(object):
             self.write(b"\x1BT0008\r")
         elif key == "9":
             self.write(b"\x1BT0009\r")
-        elif key == "CR":
+        elif key == "CLR":
             self.write(b"\x1BT0100\r")
         elif key == "-":
             self.write(b"\x1BT0101\r")
@@ -73,8 +74,16 @@ class ND287(object):
         else:
             pass
 
+        number of the currently installed software
+        Version number of the currently installed software
 
     def output_device_identification(self):
+        """
+        Return
+        1 Device nameID
+        2 number of the currently installed software
+        3 Version number of the currently installed software
+        """
         info = self.query(b"\x1BA0000\r")
         return info
 
@@ -95,6 +104,41 @@ class ND287(object):
         return software_id
 
     def output_status_bar(self):
+        """
+        Return: a b c d e f g h
+        a: Operating mode
+            0 = Actual Value
+            1 = Distance- To-Go
+        b: Display mode for axis and coupled axes
+            0 = X1
+            1 = X2
+            2 = X1 + X2
+            3 = X1 - X2
+            4 = f(X1, X2)
+        c: Scale factor
+            0 = Not active
+            1 = Active
+        d: Compensation
+            0 = No compensation
+            1 = Error compensation or axis-error compensation is active
+        e: Stopwatch
+            0 = Stopped
+            1 = Stopwatch is running
+        f: Unit of measure
+            0 = mm
+            1 = inches
+            2 = DEG
+            3 = DMS
+            4 = rad
+        g: Datum
+            1 = Datum1
+            2 = Datum 2
+        h: Soft-key page
+            1 = Page 1
+            2 = Page 2
+            3 = Page 3
+            4 = Keyboard is locked
+        """
         bar = self.query(b"\x1BA0800\r")
         return bar
 
