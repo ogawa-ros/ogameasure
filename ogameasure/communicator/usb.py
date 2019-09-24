@@ -12,8 +12,8 @@ class usb(communicator.communicator):
 
     def __init__(self, serial_number):
         self.serial_number = serial_number.upper()
-        #self.rtimeout = timeout
-        #self.wtimeout = timeout
+        self.rtimeout = rtimeout
+        self.wtimeout = wtimeout
         serial_li = list_ports.comports()
         for i in range(len(serial_li)):
             try:
