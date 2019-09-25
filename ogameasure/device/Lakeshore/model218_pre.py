@@ -1052,7 +1052,7 @@ class model218_pre(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send('KRDG? %d \r\n'%(ch))
+        self.com.send(b'KRDG? %d \r\n'%(ch))
         ret = self.com.readline()
         ret = map(float, ret.strip().split(','))
         if ch!=0: ret = ret[0]
