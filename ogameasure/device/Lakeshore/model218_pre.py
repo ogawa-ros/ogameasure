@@ -1039,7 +1039,7 @@ class model218_pre(scpi.scpi_family):
         ret = int(ret)
         return ret
 
-    def kelvin_reading_query(self, ch=0, terminator=''):
+    def kelvin_reading_query(self, ch=0):
         """
         KRDG? : Query Kelvin Reading for Single Input or All Inputs
         -----------------------------------------------------------
@@ -1053,7 +1053,7 @@ class model218_pre(scpi.scpi_family):
               at the maximum update rate of 16 rdg/s.
         """
         self.com.send(b'KRDG? %d \r\n'%(ch))
-        ret = self.com.readline()
+        ret = self.com.recv()
         ret = map(float, ret.strip().split(','))
         if ch!=0: ret = ret[0]
         return ret
