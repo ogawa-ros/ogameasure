@@ -1054,7 +1054,7 @@ class model218_pre(scpi.scpi_family):
         """
         self.com.send(b'KRDG? %d \r\n'%(ch))
         ret = self.com.recv()
-        ret = map(float, str(ret).strip().split(','))
+        ret = map(float, ret.decode('utf-8').strip().split(','))
         if ch!=0: ret = ret[0]
         return ret
 
