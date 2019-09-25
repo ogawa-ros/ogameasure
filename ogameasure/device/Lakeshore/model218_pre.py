@@ -2,7 +2,7 @@ import sys
 import datetime
 from ..SCPI import scpi
 
-class model218(scpi.scpi_family):
+class model218_pre(scpi.scpi_family):
     manufacturer = 'Lakeshore'
     product_name = 'model 218'
     classification = 'Temperature Monitor'
