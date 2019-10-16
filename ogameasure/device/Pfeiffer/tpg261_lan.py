@@ -11,10 +11,11 @@ class tpg261_lan():
 
     def pressure(self):
         self.com.send(b"PR1 \r\n")
-        time.sleep(0.3)
+        time.sleep(0.1)
         self.com.send(b"\x05")
-        time.sleep(0.3)
+        time.sleep(0.1)
         self.raw_p = self.com.recv().decode('utf-8').strip().split(',') 
+        time.sleep(0.1)
         pressure = float(self.raw_p[-1])
         return pressure
 
