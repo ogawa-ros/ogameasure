@@ -14,12 +14,9 @@ class tpg261_lan():
         time.sleep(0.3)
         self.com.send(b"\x05")
         time.sleep(0.3)
-        self.raw_p = self.com.recv().decode('utf-8').strip().split(',')
-        if type(self.raw_p[2])==str: 
-            pressure = numpy.float64(self.raw_p[2])
-            return pressure
-        else:
-            pass
+        self.raw_p = self.com.recv().decode('utf-8').strip().split(',') 
+        pressure = numpy.float64(self.raw_p[-1])
+        return pressure
 
     def tpg_status(self):
         self.com.send(b"PR1 \r\n")
