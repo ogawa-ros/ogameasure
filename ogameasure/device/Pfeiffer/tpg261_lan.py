@@ -15,7 +15,7 @@ class tpg261_lan():
         self.com.send(b"\x05")
         time.sleep(0.3)
         self.raw_p = self.com.recv().decode('utf-8').strip().split(',')
-        pressure = numpy.float64(self.raw_p)
+        pressure = numpy.float64(self.raw_p[1])
         return pressure
 
     def tpg_status(self):
