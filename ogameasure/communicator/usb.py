@@ -7,13 +7,13 @@ class usb(communicator.communicator):
 
     serial_number = ''
     port = ''
-    rtimeout = 0.1
-    wtimeout = 0.1
 
     def __init__(self, serial_number):
         self.serial_number = serial_number.upper()
-        #self.rtimeout = timeout
-        #self.wtimeout = timeout
+        self.rtimeout = 0.1
+        self.wtimeout = 0.1
+        self.parity = 'O'
+        self.bytesize = 7
         serial_li = list_ports.comports()
         for i in range(len(serial_li)):
             try:
@@ -26,7 +26,7 @@ class usb(communicator.communicator):
     def open(self):
         if self.connection == False:
             self.ser = serial.Serial(
-                self.port, timeout=self.rtimeout, write_timeout=self.wtimeout
+                self.port, timeout=self.rtimeout, write_timeout=self.wtimeout, parity=self.parity, bytesize=self.bytesize
             )
             self.connection = True
         return
