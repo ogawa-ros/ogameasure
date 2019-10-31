@@ -1,3 +1,3 @@
 # Signal Generator
 # ----------------
-from M100_raspi import m100
+from .M100_raspi import m100
