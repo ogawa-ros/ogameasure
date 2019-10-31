@@ -23,7 +23,7 @@ PORT = 50000
 #f.close()
 
 class m100(object):
-    def capture(savedir):
+    def capture(self,savedir):
         #savedir = './picture/'+timestr+'.JPG'
         savedir = './picture/'+savedir
         logging.basicConfig(format='%(levelname)s: %(name)s: %(massage)s', level=logging.WARNING)
