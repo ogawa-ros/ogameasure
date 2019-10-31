@@ -23,9 +23,9 @@ PORT = 50000
 #f.close()
 
 class m100(object):
-    def capture(self,savedir):
+    def capture(self,savepath):
         #savedir = './picture/'+timestr+'.JPG'
-        savedir = './picture/'+savedir
+        savedir = savepath
         logging.basicConfig(format='%(levelname)s: %(name)s: %(massage)s', level=logging.WARNING)
         gp.check_result(gp.use_python_logging())
         camera = gp.check_result(gp.gp_camera_new())
