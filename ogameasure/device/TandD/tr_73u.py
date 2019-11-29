@@ -19,7 +19,7 @@ class tr_73u(object):
         return
 
     def read(self, byte=100):
-        self.ser.read(byte_size)
+        self.ser.read(byte)
         return
 
     def query(self, cmd, byte, wt=0.01):
