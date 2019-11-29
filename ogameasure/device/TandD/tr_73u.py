@@ -28,7 +28,7 @@ class tr_73u(object):
         ret = self.read(byte)
         return ret
 
-    def　start(self):
+    def start(self):
         self.write(b'0x00')
         return
 
