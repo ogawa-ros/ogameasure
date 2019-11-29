@@ -11,7 +11,7 @@ class tr_73u(object):
         return
 
     def serial_open(self, port):
-        ser = serial.Serial(port=port, baundrate=19200, timeout=None, stopbit=1)
+        ser = serial.Serial(port=port, baudrate=19200, timeout=None, stopbits=1)
         return ser
 
     def write(self, cmd):
