@@ -35,3 +35,8 @@ class tr_73u(object):
     def output_current_data(self):
         data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00', byte=26)
         return data
+
+    #data = 26byte, format=B
+    #temp = (data[6]*16**2+data[5]-1000)/10
+    #humid = (data[8]*16**2+data[7]-1000)/10
+    #press = (data[10]*16**2+data[9])/10
