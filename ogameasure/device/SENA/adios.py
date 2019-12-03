@@ -72,16 +72,14 @@ class adios(object):
 
     def __init__(self, com):
         self.com = com
+        self.com.open()
         pass
 
     def _set_att(self, no, value):
-        self.com.open()
         self.com.send(self.att["att{0}_{1}dB".format(no, value)].encode())
-        self.com.close()
         return
 
     def get_att1(self):
-        self.com.open()
         self.com.send(self.off['level_off'].encode())
         while True:
             try:
@@ -94,7 +92,6 @@ class adios(object):
                 print('(error) att1')
                 continue
             continue
-        self.com.close()
         time.sleep(0.1)
 
         do1 = int(temp[-16])*1
@@ -106,7 +103,6 @@ class adios(object):
         return att1
 
     def get_att2(self):
-        self.com.open()
         self.com.send(self.off['level_off'].encode())
         while True:
             try:
@@ -118,7 +114,6 @@ class adios(object):
                 print('(error) att2')
                 continue
             continue
-        self.com.close()
         time.sleep(0.1)
 
         do6 = int(temp[-10])*1
