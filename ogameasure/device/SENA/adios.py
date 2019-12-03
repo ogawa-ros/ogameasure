@@ -57,7 +57,7 @@ class adios(object):
 
     def _set_att(self, no, value):
         self.com.open()
-        self.com.send(self.att["att{0}_{1}dB".format(no, value).encode()])
+        self.com.send(self.att["att{0}_{1}dB".format(no, value)].encode())
         self.com.close()
         return
 
