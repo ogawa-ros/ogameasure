@@ -65,7 +65,7 @@ class FSW0000(scpi.scpi_family):
         +2.0000000e+10
         """
         self.com.send(b'FREQ?')
-        ret = self.com.readline()
+        ret = self.com.recv().decode()
         ret = float(ret)
         ret = ret / 1000.
         return ret
@@ -118,7 +118,7 @@ class FSW0000(scpi.scpi_family):
         10.1
         """
         self.com.send(b'POW?')
-        ret = self.com.readline()
+        ret = self.com.recv().decode()
         ret = float(ret)
         return ret
 
