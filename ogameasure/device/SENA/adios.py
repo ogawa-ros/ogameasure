@@ -84,7 +84,7 @@ class adios(object):
         while True:
             try:
                 temp = self.com.recv()
-                if temp.find(':')==-1: continue
+                if temp.decode().find(':')==-1: continue
                 else: pass
                 #print temp
                 break
@@ -107,7 +107,7 @@ class adios(object):
         while True:
             try:
                 temp = self.com.recv()
-                if temp.find(':')==-1: continue
+                if temp.decode().find(':')==-1: continue
                 else: pass
                 break
             except communicator.CommunicatorTimeout:
