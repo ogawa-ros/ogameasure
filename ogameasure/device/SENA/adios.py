@@ -84,8 +84,8 @@ class adios(object):
         self.com.send(self.off['level_off'].encode())
         while True:
             try:
-                temp = self.com.recv()
-                if temp.decode().find(':')==-1: continue
+                temp = self.com.recv().decode()
+                if temp.find(':')==-1: continue
                 else: pass
                 #print temp
                 break
@@ -107,8 +107,8 @@ class adios(object):
         self.com.send(self.off['level_off'].encode())
         while True:
             try:
-                temp = self.com.recv()
-                if temp.decode().find(':')==-1: continue
+                temp = self.com.recv().decode()
+                if temp.find(':')==-1: continue
                 else: pass
                 break
             except communicator.CommunicatorTimeout:
