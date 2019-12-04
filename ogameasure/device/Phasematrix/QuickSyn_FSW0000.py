@@ -64,7 +64,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_get()
         +2.0000000e+10
         """
-        self.com.send(b'FREQ?')
+        self.com.send(b'FREQ?\n')
         ret = self.com.recv().decode()
         ret = float(ret)
         ret = ret / 1000.
@@ -117,7 +117,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_get()
         10.1
         """
-        self.com.send(b'POW?')
+        self.com.send(b'POW?\n')
         ret = self.com.recv().decode()
         ret = float(ret)
         return ret
@@ -213,7 +213,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_query()
         1
         """
-        self.com.send(b'OUTP:STAT?')
+        self.com.send(b'OUTP:STAT?\n')
         ret = self.com.readline()
         if ret.upper().find('ON') != -1: ret = 1
         elif ret.upper().find('OFF') != -1: ret = 0
@@ -229,7 +229,7 @@ class FSW0000(scpi.scpi_family):
         return
 
     def reference_source_query():
-        self.com.send(b'ROSC:SOUR?')
+        self.com.send(b'ROSC:SOUR?\n')
         ret = self.com.readline().strip()
         return ret
 
