@@ -7,5 +7,5 @@ from . import Lakeshore
 from . import ELVA1
 from . import Pfeiffer
 from . import Anritsu
-from . import Canon
+#from . import Canon
 from . import SENA
