@@ -33,7 +33,7 @@ class tr_73u(object):
         return
 
     def output_current_data(self):
-        data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00\r\n', byte=26)
+        data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00', byte=26)
         return data
 
     #data = 26byte, format=B
