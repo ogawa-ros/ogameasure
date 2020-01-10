@@ -11,7 +11,7 @@ class tr_73u(object):
         return
 
     def serial_open(self, port):
-        ser = serial.Serial(port=port, baudrate=19200, timeout=None, stopbits=1)
+        ser = serial.Serial(port=port, baudrate=19200, timeout=5, stopbits=1)
         return ser
 
     def write(self, cmd):
@@ -33,7 +33,10 @@ class tr_73u(object):
         return
 
     def output_current_data(self):
-        data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00', byte=26)
+        try:
+            data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00', byte=26)
+        except:
+            pass
         return data
 
     #data = 26byte, format=B
