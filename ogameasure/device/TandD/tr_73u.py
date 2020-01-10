@@ -35,9 +35,13 @@ class tr_73u(object):
     def output_current_data(self):
         try:
             data = self.query(cmd=b'\x01\x33\x00\x04\x00\x00\x00\x00\x00\x38\x00', byte=26)
+            d = struct.unpack('26B', data)
+            temp = (d[6]*16**2+d[5]-1000)/10
+            humid = (d[8]*16**2+d[7]-1000)/10
+            press = (d[10]*16**2+d[9])/10
         except:
             pass
-        return data
+        return temp, humid, pressure
 
     #data = 26byte, format=B
     #temp = (data[6]*16**2+data[5]-1000)/10
