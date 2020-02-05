@@ -94,7 +94,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.power_set(-130)
         >>> s.power_set(-10.2, 'dBm')
         """
-        self.com.send('POW {0:f} {1}'.format(pow, unit).encode())
+        self.com.send('POW {0:f} {1}\n'.format(pow, unit).encode())
         return
 
     def power_query(self):
@@ -167,7 +167,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_on()
         """
-        self.com.send(b'OUTP:STAT ON')
+        self.com.send(b'OUTP:STAT ON\n')
         return
 
     def output_off(self):
@@ -188,7 +188,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_off()
         """
-        self.com.send(b'OUTP:STAT OFF')
+        self.com.send(b'OUTP:STAT OFF\n')
         return
 
     def output_query(self):
