@@ -146,7 +146,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_set('OFF')
         >>> s.output_set(0)
         """
-        self.com.send('OUTP:STAT {0}'.format(str(output)).encode())
+        self.com.send('OUTP:STAT {0}\n'.format(str(output)).encode())
         return
 
     def output_on(self):
