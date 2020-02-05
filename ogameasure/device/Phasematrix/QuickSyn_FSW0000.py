@@ -40,7 +40,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(1.234, 'MHz')
         >>> s.freq_set(98765.4321, 'kHz')
         """
-        self.com.send(b'FREQ {0:10f} {1}'.format(freq, unit).encode())
+        self.com.send('FREQ {0:10f}{1}'.format(freq, unit).encode())
         return
 
     def freq_query(self):
