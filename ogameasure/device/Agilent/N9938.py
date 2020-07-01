@@ -9,7 +9,7 @@ from ..SCPI import scpi
 
 class N9938A(scpi.scpi_family):
     manufacturer = 'Agilent'
-    product_name = 'N9338'
+    product_name = 'N9938'
     classification = 'Spectrum Analyzer'
 
     _scpi_enable = '*CLS *ESE *ESR? *IDN? *OPC *OPC? *OPT?' +\
