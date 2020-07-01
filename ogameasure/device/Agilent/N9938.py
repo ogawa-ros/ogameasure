@@ -207,7 +207,6 @@ class N9938A(scpi.scpi_family):
         ret = self.com.readline()
         self._error_check()
         ret = ret.split(',')
-        print(ret)
         y = int(ret[0])
         m = int(ret[1])
         d = int(ret[2])
