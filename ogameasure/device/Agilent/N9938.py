@@ -12,8 +12,8 @@ class N9938A(scpi.scpi_family):
     product_name = 'N9938'
     classification = 'Spectrum Analyzer'
 
-    _scpi_enable = '*CLS *ESE *ESR? *IDN? *OPC *OPC? *OPT?' +\
-                   '*RST *WAI'
+    _scpi_enable = '*CLS *ESE *ESR? *IDN? *OPC *OPC? *OPT? *RST *WAI'
+
 
     def _error_check(self):
         err_num, err_msg = self.error_query()
