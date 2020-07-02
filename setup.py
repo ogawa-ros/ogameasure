@@ -20,6 +20,10 @@ setuptools.setup(
         'ogameasure.device.SCPI',
         'ogameasure.device.ELVA1',
         'ogameasure.device.Phasematrix',
+        'ogameasure.device.HEIDENHAIN',
+        'ogameasure.device.Canon',
+        'ogameasure.device.TandD',
+        'ogameasure.device.SENA',
         'ogameasure.interface',
     ],
     classifiers=[
