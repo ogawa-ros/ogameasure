@@ -15,9 +15,9 @@ from .E4418 import E4419B
 from .N9342 import N9342C
 from .N9342 import N9343C
 from .N9342 import N9344C
+from .N9938 import N9938A
 
 # Attenuator/Switch Driver
 # ------------------------
 from .agilent_11713 import agilent_11713B
 from .agilent_11713 import agilent_11713C
-
