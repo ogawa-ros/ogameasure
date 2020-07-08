@@ -21,6 +21,7 @@ setuptools.setup(
         'ogameasure.device.ELVA1',
         'ogameasure.device.Phasematrix',
         'ogameasure.device.HEIDENHAIN',
+        'ogameasure.device.KIKUSUI',
         'ogameasure.device.Canon',
         'ogameasure.device.TandD',
         'ogameasure.device.SENA',
