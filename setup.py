@@ -25,6 +25,7 @@ setuptools.setup(
         'ogameasure.device.TandD',
         'ogameasure.device.SENA',
         'ogameasure.interface',
+        'ogameasure.device.KIKUSUI',
     ],
     classifiers=[
         'Operating System :: POSIX :: Linux',
