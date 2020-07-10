@@ -2,7 +2,7 @@
 
 import time, numpy
 
-class tpg261_lan():
+class tpg261_lan(object):
 
     def __init__(self, com):
         self.com = com
@@ -10,11 +10,11 @@ class tpg261_lan():
         pass
 
     def pressure(self):
-        self.com.send(b"PR1 \r\n")
+        self.com.send("PR1 \r\n")
         time.sleep(0.1)
-        self.com.send(b"\x05")
+        self.com.send("\x05")
         time.sleep(0.1)
-        self.raw_p = self.com.recv().decode('utf-8').strip().split(',') 
+        self.raw_p = self.com.recv().decode('utf-8').strip().split(',')
         time.sleep(0.1)
         pressure = float(self.raw_p[-1])
         return pressure
@@ -48,7 +48,7 @@ class tpg261_lan():
         time.sleep(0.3)
         self.get = self.com.recv()
         status1_g = self.get[3:4]
-        if status1_g == b'0' : 
+        if status1_g == b'0' :
             print('Gauge cannot be turned on/off')
         elif status1_g == b'1' :
             print('Gauge turned off')
@@ -115,4 +115,3 @@ class tpg261_lan():
         self.raw_pa = self.com.recv()
         unit = self.raw_pa[3:4]
         return unit
-
