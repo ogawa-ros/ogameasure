@@ -11,3 +11,4 @@ from . import HEIDENHAIN
 #from . import Canon
 from . import SENA
 from . import TandD
+from . import KIKUSUI
