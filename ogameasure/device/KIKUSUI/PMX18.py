@@ -79,13 +79,13 @@ class PMX18_2A(scpi.scpi_family):
         return
 
 
-    def query_A(self):
+    def query_curr(self):
         self.com.send('MEAS:CURR?')
         ret = self.com.readline()
         ret = float(ret.rstrip("\r\n"))
         return ret
 
-    def query_V(self):
+    def query_volt(self):
         self.com.send('MEAS:VOLT?')
         ret = self.com.readline()
         ret = float(ret.rstrip("\r\n"))
