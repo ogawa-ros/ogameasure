@@ -68,12 +68,12 @@ class PMX18_2A(scpi.scpi_family):
         単位：A,V
         """
 
-    def set_A(self,curr):
+    def set_curr(self,curr):
         self.com.send('CURR %s'%(curr))
         time.sleep(0.1)
         return
 
-    def set_V(self,vol):
+    def set_volt(self,vol):
         self.com.send('VOLT %s'%(vol))
         time.sleep(0.1)
         return
