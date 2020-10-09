@@ -22,7 +22,7 @@ class model218_usb(object):
                                 write_timeout=3)
         pass
 
-    def send(self,cmd)
+    def send(self,cmd):
         terminator = "\r\n"
         _cmd = cmd + terminator
         cmd_byte = _cmd.encode()
