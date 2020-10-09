@@ -228,7 +228,7 @@ class FSW0000(scpi.scpi_family):
         self.com.send('ROSC:SOUR EXT')
         return
 
-    def reference_source_query():
+    def reference_source_query(self):
         self.com.send('ROSC:SOUR?\n')
         ret = self.com.readline().strip()
         return ret
