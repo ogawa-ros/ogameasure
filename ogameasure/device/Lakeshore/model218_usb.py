@@ -1063,7 +1063,7 @@ class model218_usb(object):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.send(b'KRDG? %d \r\n'%(ch))
+        self.send('KRDG? %d '%(ch))
         ret = self.com.recv()
         ret = map(float, ret.decode('utf-8').strip().split(','))
         if ch!=0: ret = ret[0]
