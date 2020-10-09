@@ -1,8 +1,9 @@
 import sys
 import datetime
 from ..SCPI import scpi
+import serial
 
-class model218_pre(scpi.scpi_family):
+class model218_usb(object):
     manufacturer = 'Lakeshore'
     product_name = 'model 218'
     classification = 'Temperature Monitor'
@@ -10,12 +11,22 @@ class model218_pre(scpi.scpi_family):
     _scpi_enable = '*CLS *ESE *ESE? *ESR? *IDN? *OPC *OPC? *RST *SRE ' \
                    + '*SRE? *STB? *TST? *WAI'
 
-    """
-    def __init__(self, com):
-        scpi.scpi_family.__init__(self, com)
-        self.com.com.readline()
+    def __init__(self, port):
+        port = port
+        self.com = serial.Serial(port=port,
+                                baudrate=9600,
+                                bytesize=7,
+                                parity="O",
+                                stopbits=1,
+                                timeout=3,
+                                write_timeout=3)
         pass
-    """
+
+    def send(self,cmd)
+        terminator = "\r\n"
+        _cmd = cmd + terminator
+        cmd_byte = _cmd.encode()
+        self.com.write(cmd_byte)
 
     def alarm_set(self, ch=1, off_on=1, source=1, high_value=300,
                   low_value=100, deadband=1, latch_enable=0):
@@ -51,7 +62,7 @@ class model218_pre(scpi.scpi_family):
             Specifies a latched alarm (remains active after alarm condition
             correction).
         """
-        self.com.send('ALARM %d, %d, %d %.3f, %.3f, %.3f, %d'%
+        self.send('ALARM %d, %d, %d %.3f, %.3f, %.3f, %d'%
                       (ch, off_on, source, high_value, low_value, deadband,
                        latch_enable))
         return
@@ -68,7 +79,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             off_on, source, high_value, low_value, deadband, latch_enable
         """
-        self.com.send('ALARM? %d'%(ch))
+        self.send('ALARM? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         off_on = int(ret[0])
@@ -144,7 +155,7 @@ class model218_pre(scpi.scpi_family):
             low_status : Specifies low alarm status.
                          0 = Unactivated, 1 = Activated
         """
-        self.com.send('ALARMST? %d'%(ch))
+        self.send('ALARMST? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         high_status = int(ret[0])
@@ -199,7 +210,7 @@ class model218_pre(scpi.scpi_family):
             disables/enables beeper.
             1 = On, 0 = Off
         """
-        self.com.send('ALMB %d'%(off_on))
+        self.send('ALMB %d'%(off_on))
         return
 
     def audible_alarm_query(self):
@@ -212,7 +223,7 @@ class model218_pre(scpi.scpi_family):
             off_on : disables/enables beeper.
                      1 = On, 0 = Off
         """
-        self.com.send('ALMB?')
+        self.send('ALMB?')
         ret = self.com.readline()
         ret = int(ret)
         print('ALMB?')
@@ -227,7 +238,7 @@ class model218_pre(scpi.scpi_family):
         ------------------------------------------
         Resets a latched active alarm after the alarm condition has cleared.
         """
-        self.com.send('ALMRST')
+        self.send('ALMRST')
         return
 
     def analog_outputs_set(self, ch=1, bipolar_enable=0, mode=1, monitor_ch=1,
@@ -267,7 +278,7 @@ class model218_pre(scpi.scpi_family):
         < manual : float :  >
             If <mode> = 2, this parameter is the output of the analog output.
         """
-        self.com.send('ANALOG %d, %d, %d, %d, %d, %.3f, %.3f, %.3f'%
+        self.send('ANALOG %d, %d, %d, %d, %d, %.3f, %.3f, %.3f'%
                       (ch, bipolar_enable, mode, monitor_ch, source,
                        high_value, low_value, manual))
         return
@@ -284,7 +295,7 @@ class model218_pre(scpi.scpi_family):
             bipolar_enable, mode, monitor_ch, source, high_value,
             low_value, manual_value
         """
-        self.com.send('ANALOG? %d'%(ch))
+        self.send('ANALOG? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         bipolar_enable = int(ret[0])
@@ -321,7 +332,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             output
         """
-        self.com.send('AOUT? %d'%(ch))
+        self.send('AOUT? %d'%(ch))
         ret = self.com.readline()
         ret = float(ret)
         return ret
@@ -336,7 +347,7 @@ class model218_pre(scpi.scpi_family):
             Specifies bits per second (bps) rate.
             0 = 300, 1 = 1200, 2 = 9600.
         """
-        self.com.send('BAUD %d'%(bps))
+        self.send('BAUD %d'%(bps))
         return
 
     def serial_interface_baud_rate_query(self):
@@ -348,7 +359,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             bps : 0 = 300, 1 = 1200, 2 = 9600.
         """
-        self.com.send('BAUD?')
+        self.send('BAUD?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -366,7 +377,7 @@ class model218_pre(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send('CRDG? %d'%(ch))
+        self.send('CRDG? %d'%(ch))
         ret = self.com.readline()
         ret = map(float, ret.strip().split(','))
         if ch!=0: ret = ret[0]
@@ -381,7 +392,7 @@ class model218_pre(scpi.scpi_family):
         < curve_num : int : 21-28 >
             Specifies which curve to delete (21-28) for inputs 1-8.
         """
-        self.com.send('CRVDEL %d'%(curve_num))
+        self.send('CRVDEL %d'%(curve_num))
         return
 
     def curve_header_set(self, curve_num, name, SN, format, limit_value,
@@ -410,7 +421,7 @@ class model218_pre(scpi.scpi_family):
             Specifies curve temperature coefficient.
             1 = negative, 2 = positive.
         """
-        self.com.send('CRVHDR %d, %s, %s, %d, %.3f, %d'%
+        self.send('CRVHDR %d, %s, %s, %d, %.3f, %d'%
                       (curve_num, name, SN, format, limit_value, coefficient))
         return
 
@@ -425,7 +436,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             name, SN, format, limit_value, coefficient
         """
-        self.com.send('CRVHDR? %d'%(curve_num))
+        self.send('CRVHDR? %d'%(curve_num))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         name = ret[0].strip()
@@ -501,7 +512,7 @@ class model218_pre(scpi.scpi_family):
         """
         units = ('%f'%(units_value))[:7]
         temp = ('%f'%(temp_value))[:7]
-        self.com.send('CRVPT %d %d %s %s'%(curve_num, index, units, temp))
+        self.send('CRVPT %d %d %s %s'%(curve_num, index, units, temp))
         return
 
     def curve_point_query(self, curve_num, index):
@@ -523,7 +534,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             units_value, temp_value
         """
-        self.com.send('CRVPT? %d %d'%(curve_num, index))
+        self.send('CRVPT? %d %d'%(curve_num, index))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         units_value = float(ret[0])
@@ -612,7 +623,7 @@ class model218_pre(scpi.scpi_family):
         < seconds : int : 0-59 >
             Specifies seconds. Valid entries are: 0 - 59.
         """
-        self.com.send('DATETIME %d, %d, %d, %d, %d, %d'%
+        self.send('DATETIME %d, %d, %d, %d, %d, %d'%
                       (month, day, year, hour, minutes, seconds))
         return
 
@@ -624,7 +635,7 @@ class model218_pre(scpi.scpi_family):
         """
         fmt = '%m,%d,%y,%H,%M,%S'
         datetime_str = datetime.datetime.now().strftime(fmt)
-        self.com.send('DATETIME %s'%(datetime_str))
+        self.send('DATETIME %s'%(datetime_str))
         return
 
     def datetime_query(self):
@@ -636,7 +647,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             timestamp
         """
-        self.com.send('DATETIME?')
+        self.send('DATETIME?')
         ret = self.com.readline().strip()
         fmt = '%m,%d,%y,%H,%M,%S'
         timestamp = datetime.datetime.strptime(ret, fmt)
@@ -653,7 +664,7 @@ class model218_pre(scpi.scpi_family):
             The 99 is required to prevent accidentally setting the
             unit to defaults.
         """
-        self.com.send('DFLT %d'%(param))
+        self.send('DFLT %d'%(param))
         return
 
     def display_field_set(self, location, sensor, source):
@@ -673,7 +684,7 @@ class model218_pre(scpi.scpi_family):
             1 = Kelvin, 2 = Celsius, 3 = sensorunits, 4 = linear data,
             5 = minimum data, 6 = maximum data.
         """
-        self.com.send('DISPFLD %d, %d, %d'%(location, sensor, source))
+        self.send('DISPFLD %d, %d, %d'%(location, sensor, source))
         return
 
     def display_field_set_all_kelvin(self):
@@ -699,7 +710,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             sensor, source
         """
-        self.com.send('DISPFLD? %d'%(location))
+        self.send('DISPFLD? %d'%(location))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         sensor = int(ret[0])
@@ -753,7 +764,7 @@ class model218_pre(scpi.scpi_family):
             filtering function (1-10). Reading changes greater than this
             percentage reset the filter.
         """
-        self.com.send('FILTER %d, %d, %d, %d'%(ch, off_on, points, window))
+        self.send('FILTER %d, %d, %d, %d'%(ch, off_on, points, window))
         return
 
     def filter_set_all(self, off_on=1, points=5, window=2):
@@ -790,7 +801,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             off_on, points, window
         """
-        self.com.send('FILTER? %d'%(ch))
+        self.send('FILTER? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         off_on = int(ret[0])
@@ -845,7 +856,7 @@ class model218_pre(scpi.scpi_family):
         < address : int : >
             Specifies the IEEE address.
         """
-        self.com.send('IEEE %d, %d, %d'%(terminator, eoi, address))
+        self.send('IEEE %d, %d, %d'%(terminator, eoi, address))
         return
 
     def ieee488_query(self):
@@ -857,7 +868,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             terminator, eoi, address
         """
-        self.com.send('IEEE?')
+        self.send('IEEE?')
         ret = self.com.readline()
         ret = ret.strip().split(',')
         terminator = int(ret[0])
@@ -880,7 +891,7 @@ class model218_pre(scpi.scpi_family):
             6-9 = Standard Platinum Curves, 21-28 = User curves.
             Note: Curve locations 10-20 not used.
         """
-        self.com.send('INCRV %d %d'%(ch, curve_number))
+        self.send('INCRV %d %d'%(ch, curve_number))
         return
 
     def input_curve_query(self, ch):
@@ -895,7 +906,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             curve_number
         """
-        self.com.send('INCRV? %d'%(ch))
+        self.send('INCRV? %d'%(ch))
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -934,7 +945,7 @@ class model218_pre(scpi.scpi_family):
             Disables/Enables input.
             0 = Off, 1 = On.
         """
-        self.com.send('INPUT %d %d'%(ch, off_on))
+        self.send('INPUT %d %d'%(ch, off_on))
         return
 
     def input_control_query(self, ch):
@@ -949,7 +960,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             input_stauts
         """
-        self.com.send('INPUT? %d'%(ch))
+        self.send('INPUT? %d'%(ch))
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -990,7 +1001,7 @@ class model218_pre(scpi.scpi_family):
             0 = 2.5V Diode, 1 = 7.5V Diode, 2 = 250ohm Platinum,
             3 = 500ohm Platinum, 4 = 5kohm Platinum, 5 = Cernox
         """
-        self.com.send('INTYPE %s, %d'%(group, sensor_type))
+        self.send('INTYPE %s, %d'%(group, sensor_type))
         return
 
     def input_type_query(self, group):
@@ -1006,7 +1017,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             sensor_type
         """
-        self.com.send('INTYPE? %s'%(group))
+        self.send('INTYPE? %s'%(group))
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1034,7 +1045,7 @@ class model218_pre(scpi.scpi_family):
                      0 = no key pressed.
                      NOTE: KEYST? returns 1 after initial power-up.
         """
-        self.com.send('KEYST?')
+        self.send('KEYST?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1052,7 +1063,7 @@ class model218_pre(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send(b'KRDG? %d \r\n'%(ch))
+        self.send(b'KRDG? %d \r\n'%(ch))
         ret = self.com.recv()
         ret = map(float, ret.decode('utf-8').strip().split(','))
         if ch!=0: ret = ret[0]
@@ -1078,7 +1089,7 @@ class model218_pre(scpi.scpi_family):
         < b : float :  >
             Specifies a value for b in the equation.
         """
-        self.com.send('LINEAR %d, %.3f, %d, %.3f'%(ch, m, source, b))
+        self.send('LINEAR %d, %.3f, %d, %.3f'%(ch, m, source, b))
         return
 
     def linear_equation_query(self, ch):
@@ -1094,7 +1105,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             m, source, b
         """
-        self.com.send('LINEAR? %d'%(ch))
+        self.send('LINEAR? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         m = float(ret[0])
@@ -1146,7 +1157,7 @@ class model218_pre(scpi.scpi_family):
         < code : int : 0-999 >
             Specifies lock-out code. 000 - 999.
         """
-        self.com.send('LOCK %d %d'%(off_on, code))
+        self.send('LOCK %d %d'%(off_on, code))
         return
 
     def lockout_query(self):
@@ -1158,7 +1169,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             off_on, code
         """
-        self.com.send('LOCK?')
+        self.send('LOCK?')
         ret = self.com.readline()
         ret = ret.strip().split(',')
         off_on = int(ret[0])
@@ -1174,7 +1185,7 @@ class model218_pre(scpi.scpi_family):
         < off_on : int : 0,1 >
             0 = Off, 1 = On.
         """
-        self.com.send('LOG %d'%(off_on))
+        self.send('LOG %d'%(off_on))
         return
 
     def logging_on_off_query(self):
@@ -1186,7 +1197,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             off_on
         """
-        self.com.send('LOG?')
+        self.send('LOG?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1200,7 +1211,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             log_num
         """
-        self.com.send('LOGNUM?')
+        self.send('LOGNUM?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1222,7 +1233,7 @@ class model218_pre(scpi.scpi_family):
             Specifies data source to log.
             1 = Kelvin, 2 = Celsius, 3 = sensor units, 4 = linear data.
         """
-        self.com.send('LOGREAD %d, %d, %d'%(reading_number, ch, source))
+        self.send('LOGREAD %d, %d, %d'%(reading_number, ch, source))
         return
 
     def logging_records_query(self, reading_number):
@@ -1238,7 +1249,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             ch, source
         """
-        self.com.send('LOGREAD? %d'%(reading_number))
+        self.send('LOGREAD? %d'%(reading_number))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         ch = int(ret[0])
@@ -1298,7 +1309,7 @@ class model218_pre(scpi.scpi_family):
         < readings : int : 1-8 >
             Specifies number of readings per record (1-8).
         """
-        self.com.send('LOGSET %d, %d, %d, %d, %d'%(mode, overwrite, start,
+        self.send('LOGSET %d, %d, %d, %d, %d'%(mode, overwrite, start,
                                                    period, readings))
         return
 
@@ -1311,7 +1322,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             mode, overwrite, start, period, readings
         """
-        self.com.send('LOGSET?')
+        self.send('LOGSET?')
         ret = self.com.readline()
         ret = ret.strip().split(',')
         mode = int(ret[0])
@@ -1336,7 +1347,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             datetime, reading, status, source
         """
-        self.com.send('LOGVIEW? %d, %d'%(record_number, reading_number))
+        self.send('LOGVIEW? %d, %d'%(record_number, reading_number))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         date = ret[0]
@@ -1361,7 +1372,7 @@ class model218_pre(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send('LRDG? %d'%(ch))
+        self.send('LRDG? %d'%(ch))
         ret = self.com.readline()
         ret = map(float, ret.strip().split(','))
         if ch!=0: ret = ret[0]
@@ -1380,7 +1391,7 @@ class model218_pre(scpi.scpi_family):
             Specifies input data to process through max/min.
             1 = Kelvin, 2 = Celsius, 3 = sensor units, 4 = linear data.
         """
-        self.com.send('MNMX %d %d'%(ch, source))
+        self.send('MNMX %d %d'%(ch, source))
         return
 
     def minmax_query(self, ch):
@@ -1395,7 +1406,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             source
         """
-        self.com.send('MNMX? %d'%(ch))
+        self.send('MNMX? %d'%(ch))
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1412,7 +1423,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             min_value, max_value
         """
-        self.com.send('MNMXRDG? %d'%(ch))
+        self.send('MNMXRDG? %d'%(ch))
         ret = self.com.readline()
         ret = ret.strip().split(',')
         min_value = float(ret[0])
@@ -1425,7 +1436,7 @@ class model218_pre(scpi.scpi_family):
         ------------------------------------------------
         Resets the minimum and maximum data for all inputs.
         """
-        self.com.send('MNMXRST')
+        self.send('MNMXRST')
         return
 
     def local_remote_mode_set(self, mode):
@@ -1438,7 +1449,7 @@ class model218_pre(scpi.scpi_family):
             specifies which mode to operate.
             0 = local, 1 = remote, 2 = remote with local lockout.
         """
-        self.com.send('MODE %d'%(mode))
+        self.send('MODE %d'%(mode))
         return
 
     def local_remote_mode_query(self):
@@ -1450,7 +1461,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             mode
         """
-        self.com.send('MODE?')
+        self.send('MODE?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1468,7 +1479,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             status
         """
-        self.com.send('RDGST? %d'%(ch))
+        self.send('RDGST? %d'%(ch))
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1494,7 +1505,7 @@ class model218_pre(scpi.scpi_family):
             relay is in alarm mode.
             0 = Low alarm, 1 = High Alarm, 2 = Both Alarms.
         """
-        self.com.send('RELAY %d, %d, %d, %d'%(relay_number, mode,
+        self.send('RELAY %d, %d, %d, %d'%(relay_number, mode,
                                               input_alarm, alarm_type))
         return
 
@@ -1511,7 +1522,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             mode, input_alarm, alarm_type
         """
-        self.com.send('RELAY? %d'%(relay_number))
+        self.send('RELAY? %d'%(relay_number))
         ret = self.com.readline()
         ret = self.com.readline()
         ret = ret.strip().split(',')
@@ -1530,7 +1541,7 @@ class model218_pre(scpi.scpi_family):
         Returns:
             status
         """
-        self.com.send('RELAYST?')
+        self.send('RELAYST?')
         ret = self.com.readline()
         ret = int(ret)
         return ret
@@ -1550,7 +1561,7 @@ class model218_pre(scpi.scpi_family):
         < T3 : float : >
         < U3 : float : >
         """
-        self.com.send('SCAL %d, %d, %s, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f'%
+        self.send('SCAL %d, %d, %s, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f'%
                       (std, dest, SN, T1, U1, T2, U2, T3, U3))
         return
 
@@ -1567,7 +1578,7 @@ class model218_pre(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send('SRDG? %d'%(ch))
+        self.send('SRDG? %d'%(ch))
         ret = self.com.readline()
         ret = map(float, ret.strip().split(','))
         if ch!=0: ret = ret[0]
