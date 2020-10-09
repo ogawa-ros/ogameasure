@@ -1,2 +1,2 @@
 from .model218 import model218
-from .model218_pre import model218_pre
+from .model218_usb import model218_usb
