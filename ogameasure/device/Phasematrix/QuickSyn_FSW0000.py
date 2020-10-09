@@ -64,7 +64,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_get()
         +2.0000000e+10
         """
-        self.com.send(b'FREQ?\n')
+        self.com.send('FREQ?\n')
         ret = self.com.recv()
         ret = float(ret)
         ret = ret / 1000.
@@ -117,7 +117,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_get()
         10.1
         """
-        self.com.send(b'POW?\n')
+        self.com.send('POW?\n')
         ret = self.com.recv()
         ret = float(ret)
         return ret
@@ -167,7 +167,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_on()
         """
-        self.com.send(b'OUTP:STAT ON\n')
+        self.com.send('OUTP:STAT ON\n')
         return
 
     def output_off(self):
@@ -188,7 +188,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_off()
         """
-        self.com.send(b'OUTP:STAT OFF\n')
+        self.com.send('OUTP:STAT OFF\n')
         return
 
     def output_query(self):
@@ -213,7 +213,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_query()
         1
         """
-        self.com.send(b'OUTP:STAT?\n')
+        self.com.send('OUTP:STAT?\n')
         ret = self.com.readline()
         if ret.upper().find('ON') != -1: ret = 1
         elif ret.upper().find('OFF') != -1: ret = 0
@@ -221,15 +221,15 @@ class FSW0000(scpi.scpi_family):
         return ret
 
     def use_internal_reference_source(self):
-        self.com.send(b'ROSC:SOUR INT')
+        self.com.send('ROSC:SOUR INT')
         return
 
     def use_external_reference_source(self):
-        self.com.send(b'ROSC:SOUR EXT')
+        self.com.send('ROSC:SOUR EXT')
         return
 
     def reference_source_query():
-        self.com.send(b'ROSC:SOUR?\n')
+        self.com.send('ROSC:SOUR?\n')
         ret = self.com.readline().strip()
         return ret
 
