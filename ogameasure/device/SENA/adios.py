@@ -77,11 +77,11 @@ class adios(object):
         pass
 
     def _set_att(self, no, value):
-        self.com.send(self.att["att{0}_{1}dB".format(no, value)].encode())
+        self.com.send(self.att["att{0}_{1}dB".format(no, value)])
         return
 
     def get_att1(self):
-        self.com.send(self.off['level_off'].encode())
+        self.com.send(self.off['level_off'])
         while True:
             try:
                 temp = self.com.recv().decode()
@@ -104,7 +104,7 @@ class adios(object):
         return att1
 
     def get_att2(self):
-        self.com.send(self.off['level_off'].encode())
+        self.com.send(self.off['level_off'])
         while True:
             try:
                 temp = self.com.recv().decode()

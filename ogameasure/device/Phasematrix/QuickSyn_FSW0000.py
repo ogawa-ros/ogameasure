@@ -40,7 +40,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(1.234, 'MHz')
         >>> s.freq_set(98765.4321, 'kHz')
         """
-        self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit).encode())
+        self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit))
         return
 
     def freq_query(self):
@@ -94,7 +94,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.power_set(-130)
         >>> s.power_set(-10.2, 'dBm')
         """
-        self.com.send('POW {0:f} {1}\n'.format(pow, unit).encode())
+        self.com.send('POW {0:f} {1}\n'.format(pow, unit))
         return
 
     def power_query(self):
@@ -146,7 +146,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_set('OFF')
         >>> s.output_set(0)
         """
-        self.com.send('OUTP:STAT {0}\n'.format(str(output)).encode())
+        self.com.send('OUTP:STAT {0}\n'.format(str(output)))
         return
 
     def output_on(self):
