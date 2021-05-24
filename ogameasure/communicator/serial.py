@@ -74,6 +74,7 @@ class serial(communicator.communicator):
         ret = self.ser.read(byte)
         try:
             ret = ret.decode('ascii')
+        except:
             pass
         return ret
 
@@ -81,5 +82,6 @@ class serial(communicator.communicator):
         ret = self.ser.readline()
         try:
             ret = ret.decode('ascii')
+        except:
             pass
         return ret

@@ -368,7 +368,7 @@ class model218(scpi.scpi_family):
         """
         self.com.send('CRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1054,7 +1054,7 @@ class model218(scpi.scpi_family):
         """
         self.com.send('KRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1363,7 +1363,7 @@ class model218(scpi.scpi_family):
         """
         self.com.send('LRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1569,7 +1569,7 @@ class model218(scpi.scpi_family):
         """
         self.com.send('SRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
