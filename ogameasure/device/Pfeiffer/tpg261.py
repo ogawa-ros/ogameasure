@@ -1,117 +1,222 @@
-#! /usr/bin/env python3
+from .. import device
 
-import time, numpy
+class tpg261(device.device):
+    manufacturer = 'Pfeiffer Vacuum'
+    product_name = 'TPG261'
+    classification = 'Vacuum Gauge'
 
-class tpg261():
+    def _command(self, cmd):
+        self.com.send(cmd)
+        self._check_response()
+        return
 
-    def __init__(self, com):
-        self.com = com
-        self.com.open()
-        pass
+    def _query(self, cmd):
+        self.com.send(cmd)
+        self._check_response()
+        self.com.send('\x05')
+        d = self.com.readline().strip()
+        if d.find(',') != -1: return d.split(',')
+        return d
+    
+    def _check_response(self):
+        res = self.com.readline().strip()
+        if res == '\x06':
+            return
+        elif res == '\x15':
+            self.com.send('\x05')
+            error_no = self.com.readline().strip()
+            error_msgs = []
+            if error_no[0] == '1': error_msgs.append('Controller error')
+            if error_no[1] == '1': error_msgs.append('No hardware')
+            if error_no[2] == '1': error_msgs.append('Inadmissible parameter')
+            if error_no[3] == '1': error_msgs.append('Syntax error')
+            raise Exception(f'Error: error_code = {error_no}, msg = {error_msgs}.')
+        
+        raise Exception(f'Error: unexpected response. res = {res}.')
+    
+    def read_single_pressure(self, ch=1):
+        d = self._query(f'PR{ch}')
+        return self._decode_pr_reply(d[0], d[1])
 
-    def pressure(self):
-        self.com.send(b"PR1 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.raw_p = self.com.recv().split()[2]
-        pressure = numpy.float64(self.raw_p)
-        return pressure
+    def read_pressure(self):
+        d = self._query('PRX')
+        return {
+            'ch1': self._decode_pr_reply(d[0], d[1]),
+            'ch2': self._decode_pr_reply(d[2], d[3]),
+        }
 
-    def tpg_status(self):
-        self.com.send(b"PR1 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status_p = self.get[3:4]
-        if status_p == b'0' :
-            print('Measurement data okay')
-        elif status_p == b'1' :
-            print('Underrange')
-        elif status_p == b'2' :
-            print('Overrange')
-        elif status_p == b'3' :
-            print('Sensor error')
-        elif status_p == b'4' :
-            print('Sensor off (IKR, PKR, IMR, PBR)')
-        elif status_p == b'5' :
-            print('No sensor')
-        else :
-             print('Identification error')
+    def _decode_pr_reply(self, d0, d1):
+        status_msg = {
+            '0': 'OK',
+            '1': 'Underrange',
+            '2': 'Overrange',
+            '3': 'Sensor error',
+            '4': 'Sensor off',
+            '5': 'No sensor',
+            '6': 'Identification error',
+        }
+        
+        return {
+            'status_code': int(d0),
+            'status': status_msg[d0],
+            'value': float(d1),
+        }
 
-    def turn_status_g1(self):
-        self.com.send(b"SEN , 0, 0 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status1_g = self.get[3:4]
-        if status1_g == b'0' : 
-            print('Gauge cannot be turned on/off')
-        elif status1_g == b'1' :
-            print('Gauge turned off')
-        elif status1_g == b'2' :
-            print('Gauge turned on')
-        else :
+    def start_continuous_output(self, mode=1):
+        self._command(f'COM,{mode}')
+        return
+    
+    def wait_and_receive_pressure_output(self):
+        d = self.com.readline().strip().split(',')
+        return {
+            'ch1': self._decode_pr_reply(d[0], d[1]),
+            'ch2': self._decode_pr_reply(d[2], d[3]),
+        }
+
+    def stop_continous_output(self):
+        self.com.send('\x05')
+        self.com.recv(1000000)
+        return
+    
+    def gauge_status_query(self):
+        return self.gauge_status_command()
+
+    def gauge_status_command(self, ch1=0, ch2=0):
+        d = self._query(f'SEN,{ch1},{ch2}')
+        
+        status_msg = {
+            '0': 'unavailable',
+            '1': 'off',
+            '2': 'on',
+        }
+        return {
+            'ch1': {
+                'code': int(d[0]),
+                'message': status_msg[d[0]],
+            },
+            'ch2': {
+                'code': int(d[1]),
+                'message': status_msg[d[1]],
+            },
+        }
+    
+    def gauge_identification_query(self):
+        d = self._query('TID')
+
+        id_msg = {
+            'TPR': 'Pirani Gauge',
+            'IKR9': 'Cold Cathode Gauge 1e-9',
+            'IKR11': 'Cold Cathode Gauge 1e-11',
+            'PKR': 'FullRange CC Gauge',
+            'PBR': 'FullRange BA Gauge',
+            'IMR': 'Pirani / High Pressure Gauge',
+            'CMR': 'Linear gauge',
+            'noSen': 'no Sensor',
+            'noid': 'no identifier',
+        }
+        return {
+            'ch1': {
+                'id': d[0],
+                'description': id_msg[d[0]],
+            },
+            'ch2': {
+                'id': d[1],
+                'description': id_msg[d[1]],
+            }
+        }
+
+    def display_channel_command(self, ch=None):
+        if ch is None:
+            d = self._query('SCT')
+        else:
+            d = self._query(f'SCT,{ch}')
+            pass
+        
+        display_msg = {
+            '0': 'Gauge 1',
+            '1': 'Gauge 2',
+        }
+        return {
+            'code': int(d),
+            'description': display_msg[d],
+        }
+
+    def display_channel_query(self):
+        return self.display_channel_command()
+
+    def reset_error_command(self):
+        d = self._query('RES,1')
+        return self._decode_res(d)
+        
+    def error_query(self):
+        d = self._query('RES')
+        return self._decode_res(d)
+
+    def _decode_res(self, errors):
+        msg = {
+            '0': 'No error',
+            '1': 'Watchdog has responded',
+            '2': 'Task fail error',
+            '3': 'EPROM error',
+            '4': 'RAM error',
+            '5': 'EEPROM error',
+            '6': 'Display error',
+            '7': 'A/D converter error',
+            '8': '',
+            '9': 'Gauge 1 error (e.g., filament rupture, no supply)',
+            '10': 'Gauge 1 identification error',
+            '11': 'Gauge 2 error (e.g., filament rupture, no supply)',
+            '12': 'Gauge 2 identification error',
+        }
+
+        ret = []
+        for e in errors.split(','):
+            ret.append({
+                'code': int(e),
+                'message': msg[e],
+            })
+            continue
+        return ret
+
+    def unit_query(self):
+        return self.unit_command()
+
+    def unit_command(self, unit=None):
+        if unit is None:
+            d = self._query('UNI')
+        else:
+            d = self._query(f'UNI,{unit}')
+            pass
+        
+        desc = {
+            '0': 'mbar/bar',
+            '1': 'Torr',
+            '2': 'Pascal',
+        }
+        return {
+            'code': int(d),
+            'unit': desc[d],
+        }
+
+    def display_resolution_query(self):
+        return self.display_resolution_command()
+    
+    def display_resolution_command(self, res=None):
+        if res is None:
+            d = self._query('DCD')
+        else:
+            d = self._query(f'DCD,{res}')
             pass
 
-    def gauge_on_g1(self):
-        self.com.send(b"SEN , 2 , 0 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status1_g = self.get[3:4]
-        if status1_g == b'0' :
-            print('Gauge cannot be turned on/off')
-        elif status1_g == b'1' :
-            print('Gauge turned off')
-        elif status1_g == b'2' :
-            print('Gauge turned on')
-        else :
-            pass
+        desc = {
+            '2': 'Display x.x (2 digits)',
+            '3': 'Display x.xx (3 digits)',
+        }
+        return {
+            'code': int(d),
+            'description': desc[d],
+        }
 
-    def gauge_off_g1(self):
-        self.com.send(b"SEN , 1 , 0 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.get = self.com.recv()
-        status1_g = self.get[3:4]
-        if status1_g == b'0' :
-            print('Gauge cannot be turned on/off')
-        elif status1_g == b'1' :
-            print('Gauge turned off')
-        elif status1_g == b'2' :
-            print('Gauge turned on')
-        else :
-            pass
-
-    def pres_unit_bar(self):
-        self.com.send(b"UNI,0 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.raw_bar = self.com.recv()
-        unit = self.raw_bar[3:4]
-        return unit
-
-    def pres_unit_torr(self):
-        self.com.send(b"UNI,1 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.raw_torr = self.com.recv()
-        unit = self.raw_torr[3:4]
-        return unit
-
-    def pres_unit_pa(self):
-        self.com.send(b"UNI,2 \r\n")
-        time.sleep(0.3)
-        self.com.send(b"\x05")
-        time.sleep(0.3)
-        self.raw_pa = self.com.recv()
-        unit = self.raw_pa[3:4]
-        return unit
-
+    def firmware_version_query(self):
+        return self._query('PNR')
+    
