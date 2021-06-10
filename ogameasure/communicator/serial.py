@@ -4,6 +4,8 @@ from . import communicator
 class serial(communicator.communicator):
     method = 'serial'
 
+    terminator = b''
+    
     port = None
     baudrate = 9600
     bytesize = pyserial.EIGHTBITS
@@ -15,7 +17,7 @@ class serial(communicator.communicator):
     write_timeout = None
     dsrdtr = False
     inter_byte_timeout = None
-
+    
     def __init__(self, port,
                  baudrate = 9600,
                  bytesize = pyserial.EIGHTBITS,
@@ -67,21 +69,11 @@ class serial(communicator.communicator):
         return
 
     def send(self, msg):
-        self.ser.write((msg+self.terminator).encode())
+        self.ser.write(msg+self.terminator)
         return
 
     def recv(self, byte=1024):
-        ret = self.ser.read(byte)
-        try:
-            ret = ret.decode('ascii')
-        except:
-            pass
-        return ret
+        return self.ser.read(byte)
 
     def readline(self):
-        ret = self.ser.readline()
-        try:
-            ret = ret.decode('ascii')
-        except:
-            pass
-        return ret
+        return self.ser.readline()
