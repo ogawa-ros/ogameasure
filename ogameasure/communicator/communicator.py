@@ -11,7 +11,7 @@ class communicator(object):
         pass
     
     def set_terminator(self, term_char):
-        self.termingator = term_char
+        self.terminator = term_char
         return
         
     def open(self, *args):

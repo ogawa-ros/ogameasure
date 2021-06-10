@@ -69,11 +69,18 @@ class serial(communicator.communicator):
         return
 
     def send(self, msg):
+        if type(msg)==str: msg = msg.encode()
         self.ser.write(msg+self.terminator)
         return
 
     def recv(self, byte=1024):
-        return self.ser.read(byte)
+        d = self.ser.read(byte)
+        if d.isascii():
+            return d.decode()
+        return d
 
     def readline(self):
-        return self.ser.readline()
+        d = self.ser.readline()
+        if d.isascii():
+            return d.decode()
+        return d

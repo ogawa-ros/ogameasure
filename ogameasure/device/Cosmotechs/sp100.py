@@ -44,11 +44,11 @@ class sp100(device.device):
         return self.com.send(b'\x02'+msg+b'\x03'+bcc)
 
     def _recv(self, num):
-        return self.com.recv(num)
+        return self.com.recv(num).encode()
     
     def _readline(self):
         terminator = b'\x03'
-
+        
         d = b''
         while True:
             _d = self._recv(1)
