@@ -23,10 +23,10 @@ setuptools.setup(
         'ogameasure.device.HEIDENHAIN',
         'ogameasure.device.KIKUSUI',
         'ogameasure.device.Canon',
+        'ogameasure.device.Cosmotechs',
         'ogameasure.device.TandD',
         'ogameasure.device.SENA',
         'ogameasure.interface',
-        'ogameasure.device.KIKUSUI',
     ],
     classifiers=[
         'Operating System :: POSIX :: Linux',
