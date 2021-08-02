@@ -1,6 +1,8 @@
 from .. import device
 import operator
 
+import time
+
 class sp100(device.device):
     manufacturer = 'COSMOTECHS'
     product_name = 'SP100'
@@ -13,7 +15,8 @@ class sp100(device.device):
         d1 = self._recv(1)
         if d1 != b'\x06':
             raise Exception(f'Bad response: {d1}')
-        
+
+        time.sleep(0.1)
         return
     
     def command_read(self, unit, msg):
@@ -71,13 +74,13 @@ class sp100(device.device):
 
     def origin_return_command(self, ax1=False, ax2=False, ax3=False, ax4=False, unit=0):
         command = b'\x30\x20'
-        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'.encode()
+        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'
         
-        return self.command_set(unit, command+data)
+        return self.command_set(unit, command+data.encode())
     
     def absolute_move_command(self, ax1='', ax2='', ax3='', ax4='', unit=0):
         command = b'\x30\x22'
-        darta = ''
+        data = ''
 
         if ax1 != '':
             data += f'{ax1:.3f},'
@@ -101,25 +104,47 @@ class sp100(device.device):
             data += f'{ax4:.3f}'
             pass
         
-        return self.command_set(unit, command+data)
+        return self.command_set(unit, command+data.encode())
     
     def immediately_stop_command(self, ax1=False, ax2=False, ax3=False, ax4=False, unit=0):
         command = b'\x30\x24'
-        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'.encode()
+        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'
         
-        return self.command_set(unit, command+data)
+        return self.command_set(unit, command+data.encode())
     
     def decelerate_stop_command(self, ax1=False, ax2=False, ax3=False, ax4=False, unit=0):
         command = b'\x30\x25'
-        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'.encode()
+        data = f'{ax1:d},{ax2:d},{ax3:d},{ax4:d}'
         
-        return self.command_set(unit, command+data)
+        return self.command_set(unit, command+data.encode())
 
     def set_velocity_command(self, ax1=None, ax2=None, ax3=None, ax4=None, unit=0):
         command = b'\x30\x26'
-        data = f'{ax1:.1f},{ax2:.1f},{ax3:.1f},{ax4:.1f}'.encode()
+        data = ''
+
+        if ax1 is not None:
+            data += f'{ax1:.3f},'
+        else:
+            data += ','
+            pass
         
-        return self.command_set(unit, command+data)
+        if ax2 is not None:
+            data += f'{ax2:.3f},'
+        else:
+            data += ','
+            pass
+        
+        if ax3 is not None:
+            data += f'{ax3:.3f},'
+        else:
+            data += ','
+            pass
+        
+        if ax4 is not None:
+            data += f'{ax4:.3f}'
+            pass
+        
+        return self.command_set(unit, command+data.encode())
 
     def digital_output_query(self, unit=0):
         command = b'\x30\x28'
