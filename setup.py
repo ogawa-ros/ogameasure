@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name = 'ogameasure',
-    version = __import__('ogameasure').__version__,
+    version = "0.5.0",
     description = 'driver for SCPI device',
     url = 'https://github.com/ogawa-ros/ogameasure',
     author = 'Shota Ueda',
