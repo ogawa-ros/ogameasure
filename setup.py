@@ -15,7 +15,7 @@ setuptools.setup(
     author_email = 's7u27astr0@gmail.com',
     license = 'MIT',
     keywords = '',
-    install_requires=["pyserial"],
+    install_requires=["pyserial", "importlib-metadata; python_version < '3.8'"],
     packages = [
         'ogameasure',
         'ogameasure.communicator',
