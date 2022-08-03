@@ -6,7 +6,7 @@ long_description = (Path(__file__).parent / "README.md").read_text()
 
 setuptools.setup(
     name = 'ogameasure',
-    version = "0.5.0",
+    version = "0.5.1",
     description = 'Driver for SCPI device',
     long_description = long_description,
     long_description_content_type = "text/markdown",
@@ -15,7 +15,11 @@ setuptools.setup(
     author_email = 's7u27astr0@gmail.com',
     license = 'MIT',
     keywords = '',
-    install_requires=["pyserial"],
+    install_requires=[
+        "importlib-metadata; python_version < '3.8'",
+        "numpy",
+        "pyserial",
+    ],
     packages = [
         'ogameasure',
         'ogameasure.communicator',
