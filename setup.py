@@ -2,13 +2,14 @@ import setuptools
 
 setuptools.setup(
     name = 'ogameasure',
-    version = __import__('ogameasure').__version__,
+    version = "0.5.0",
     description = 'driver for SCPI device',
     url = 'https://github.com/ogawa-ros/ogameasure',
     author = 'Shota Ueda',
     author_email = 's7u27astr0@gmail.com',
     license = 'MIT',
     keywords = '',
+    install_requires=["pyserial"],
     packages = [
         'ogameasure',
         'ogameasure.communicator',
