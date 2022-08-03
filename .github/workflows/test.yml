@@ -1,0 +1,44 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
+    env:
+      PACKAGE_NAME: ogameasure
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install project and test dependencies
+        id: dependency
+        if: ${{ always() }}
+        run: |
+          pip3 install -e ./
+          pip3 install pytest
+
+      - name: Test by pytest
+        id: test
+        if: ${{ always() }}
+        run: python3 -m pytest -v tests ${PACKAGE_NAME}
+
+      - name: Write workflow summary
+        if: ${{ always() }}
+        run: |
+          echo -e '# Summary\n\n| step | status |\n| --- | --- |' >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Installation | \`${{ steps.dependency.outcome }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Run | \`${{ steps.test.outcome }}\` |" >> $GITHUB_STEP_SUMMARY
