@@ -1,9 +1,15 @@
 import setuptools
+from pathlib import Path
+
+
+long_description = (Path(__file__).parent / "README.md").read_text()
 
 setuptools.setup(
     name = 'ogameasure',
     version = "0.5.0",
-    description = 'driver for SCPI device',
+    description = 'Driver for SCPI device',
+    long_description = long_description,
+    long_description_content_type = "text/markdown",
     url = 'https://github.com/ogawa-ros/ogameasure',
     author = 'Shota Ueda',
     author_email = 's7u27astr0@gmail.com',
