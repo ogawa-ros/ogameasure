@@ -33,8 +33,15 @@ class ethernet(communicator.communicator):
         return
 
     def close(self):
-        self.sock.close()
-        del(self.sock)
+        try:
+            try:
+                self.sockfp.close()
+            except AttributeError:
+                pass
+            self.sock.close()
+        except AttributeError:
+            pass
+        del self.sock
         self.connection = False
         return
 
