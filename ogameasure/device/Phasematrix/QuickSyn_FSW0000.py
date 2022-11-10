@@ -4,7 +4,7 @@ from ..SCPI import scpi
 # main class
 # ==========
 
-delay_time = 0.01
+delay_time = 0.1
 
 class FSW0000(scpi.scpi_family):
     manufacturer = 'Phase Matrix'
