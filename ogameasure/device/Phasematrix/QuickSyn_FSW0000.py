@@ -4,6 +4,8 @@ from ..SCPI import scpi
 # main class
 # ==========
 
+delay_time = 0.1
+
 class FSW0000(scpi.scpi_family):
     manufacturer = 'Phase Matrix'
     product_name = 'QuickSyn FSW Series'
@@ -65,6 +67,7 @@ class FSW0000(scpi.scpi_family):
         +2.0000000e+10
         """
         self.com.send('FREQ?\n')
+        time.sleep(delay_time)
         ret = self.com.recv()
         ret = float(ret)
         ret = ret / 1000.
@@ -118,6 +121,7 @@ class FSW0000(scpi.scpi_family):
         10.1
         """
         self.com.send('POW?\n')
+        time.sleep(delay_time)
         ret = self.com.recv()
         ret = float(ret)
         return ret
@@ -214,6 +218,7 @@ class FSW0000(scpi.scpi_family):
         1
         """
         self.com.send('OUTP:STAT?\n')
+        time.sleep(delay_time)
         ret = self.com.readline()
         if ret.upper().find('ON') != -1: ret = 1
         elif ret.upper().find('OFF') != -1: ret = 0
@@ -230,9 +235,12 @@ class FSW0000(scpi.scpi_family):
 
     def reference_source_query(self):
         self.com.send('ROSC:SOUR?\n')
+        time.sleep(delay_time)
         ret = self.com.readline().strip()
         return ret
 
+    def close(self):
+        self.com.close()
 
 
 class FSW0010(FSW0000):
