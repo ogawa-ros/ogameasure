@@ -28,12 +28,12 @@ class FSW0000(scpi.scpi_family):
         < freq : float :  >
             A frequency value.
 
-        < unit : str : 'GHz','MHz','kHz','Hz' >
+        < unit : str : 'GHz','MHz','kHz','mlHz' >
             Specify the units of the <freq>.
-            'GHz', 'MHz', 'kHz' or 'Hz'. default = 'GHz'
+            'GHz', 'MHz', 'kHz' or 'mlHz'. default = 'GHz'
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -43,6 +43,10 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(98765.4321, 'kHz')
         """
         self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit))
+        time.sleep(delay_time)
+        ret = self.com.recv()
+        if b"Data out of range" in ret:
+            raise ValueError(ret)
         return
 
     def freq_query(self):
@@ -56,14 +60,14 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
+        Returns
         ========
         < freq : float :  >
             A frequency value in Hz.
 
         Examples
         ========
-        >>> s.freq_get()
+        >>> s.freq_query()
         +2.0000000e+10
         """
         self.com.send('FREQ?\n')
@@ -88,8 +92,8 @@ class FSW0000(scpi.scpi_family):
             Specify the units of the <pow>.
             'dBm'. default = 'dBm'
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -110,14 +114,14 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         < power : float :  >
             A power value in dBm.
 
         Examples
         ========
-        >>> s.freq_get()
+        >>> s.power_query()
         10.1
         """
         self.com.send('POW?\n')
@@ -139,8 +143,8 @@ class FSW0000(scpi.scpi_family):
         < output : str,int : 'ON','OFF',1,0 >
             Enable/disable the RF output.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -163,8 +167,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -184,8 +188,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -205,8 +209,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         < output : int : 1,0 >
             Enable/disable the RF output.
             1 = ON, 0 = OFF
