@@ -48,7 +48,7 @@ class gpib_prologix(communicator.communicator):
         self._sleep()
         return
 
-    def recv(self, byte):
+    def recv(self, byte=1024):
         self._send('++read %d'%byte)
         ret = self.com.recv(byte)
         return ret
