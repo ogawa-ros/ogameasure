@@ -1,6 +1,9 @@
 import sys
 import datetime
+import time
 from ..SCPI import scpi
+
+delay_time = 0.1
 
 class model218(scpi.scpi_family):
     manufacturer = 'Lakeshore'
@@ -1053,8 +1056,9 @@ class model218(scpi.scpi_family):
               at the maximum update rate of 16 rdg/s.
         """
         self.com.send('KRDG? %d'%(ch))
-        ret = self.com.readline()
-        ret = list(map(float, ret.strip().split(',')))
+        time.sleep(delay_time)
+        ret = self.com.recv()
+        ret = list(map(float, ret.strip().split(b',')))
         if ch!=0: ret = ret[0]
         return ret
 
