@@ -59,7 +59,7 @@ class FSW0000(scpi.scpi_family):
         else:
             raise ValueError(f"Invalid unit: {unit}")
 
-        if not (self.freq_ghz[0] <= freq_ghz <= self.freq_ghz[1]):
+        if not (self.freq_range_ghz[0] <= freq_ghz <= self.freq_range_ghz[1]):
             raise ValueError(
                 "Frequency must be "
                 f"between {self.freq_range_ghz[0]} and {self.freq_range_ghz[1]} GHz."
