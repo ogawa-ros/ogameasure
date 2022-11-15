@@ -267,7 +267,7 @@ class FSW0000(scpi.scpi_family):
 
 class FSW0010(FSW0000):
     product_name = 'FSW-0010'
-    freq_range_ghz = (0.5, 20)
+    freq_range_ghz = (0.5, 10)
     power_default_dbm = 15
     power_range_dbm = (-25, 15)
 
