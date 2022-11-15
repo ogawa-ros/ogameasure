@@ -14,8 +14,8 @@ class FSW0000(scpi.scpi_family):
     _scpi_enable = '*IDN? *RCL *RST'
 
     freq_range_ghz = ()
-    power_default_dbm = 0
-    power_range_dbm = ()
+    power_default_dbm = 0  # Currently not used.
+    power_range_dbm = ()  # Currently not used.
 
     def _error_check(self):
         return
