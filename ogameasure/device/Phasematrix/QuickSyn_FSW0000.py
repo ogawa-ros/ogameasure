@@ -274,5 +274,5 @@ class FSW0010(FSW0000):
 class FSW0020(FSW0000):
     product_name = 'FSW-0020'
     freq_range_ghz = (0.5, 20)
-    power_default_dbm = 15
+    power_default_dbm = 13
     power_range_dbm = (-10, 13)
