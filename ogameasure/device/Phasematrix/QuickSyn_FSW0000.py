@@ -1,5 +1,4 @@
 import time
-from socket import timeout
 from ..SCPI import scpi
 
 # main class
@@ -13,6 +12,10 @@ class FSW0000(scpi.scpi_family):
     classification = 'Signal Generator'
 
     _scpi_enable = '*IDN? *RCL *RST'
+
+    freq_range_ghz = ()
+    power_default_dbm = 0
+    power_range_dbm = ()
 
     def _error_check(self):
         return
@@ -29,9 +32,9 @@ class FSW0000(scpi.scpi_family):
         < freq : float :  >
             A frequency value.
 
-        < unit : str : 'GHz','MHz','kHz','mlHz' >
+        < unit : str : 'GHz','MHz','kHz','Hz','mlHz' >
             Specify the units of the <freq>.
-            'GHz', 'MHz', 'kHz' or 'mlHz'. default = 'GHz'
+            'GHz', 'MHz', 'kHz', 'Hz' or 'mlHz'. default = 'GHz'
 
         Returns
         =======
@@ -43,14 +46,26 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(1.234, 'MHz')
         >>> s.freq_set(98765.4321, 'kHz')
         """
+        if unit.lower() == "ghz":
+            freq_ghz = freq
+        elif unit.lower() == "mhz":
+            freq_ghz = freq / 1e3
+        elif unit.lower() == "khz":
+            freq_ghz = freq / 1e6
+        elif unit.lower() == "hz":
+            freq_ghz = freq / 1e9
+        elif unit.lower() == "mlhz":
+            freq_ghz = freq / 1e12
+        else:
+            raise ValueError(f"Invalid unit: {unit}")
+
+        if not (self.freq_ghz[0] <= freq_ghz <= self.freq_ghz[1]):
+            raise ValueError(
+                "Frequency must be "
+                f"between {self.freq_range_ghz[0]} and {self.freq_range_ghz[1]} GHz."
+            )
+
         self.com.send('FREQ {0}{1}\n'.format(freq, unit))
-        time.sleep(delay_time)
-        try:
-            ret = self.com.recv()
-            if b"Data out of range" in ret:
-                raise ValueError(ret)
-        except timeout:
-            pass
 
     def freq_query(self):
         """
@@ -252,6 +267,12 @@ class FSW0000(scpi.scpi_family):
 
 class FSW0010(FSW0000):
     product_name = 'FSW-0010'
+    freq_range_ghz = (0.5, 20)
+    power_default_dbm = 15
+    power_range_dbm = (-25, 15)
 
 class FSW0020(FSW0000):
     product_name = 'FSW-0020'
+    freq_range_ghz = (0.5, 20)
+    power_default_dbm = 15
+    power_range_dbm = (-10, 13)
