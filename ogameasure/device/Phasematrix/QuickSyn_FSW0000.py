@@ -1,4 +1,5 @@
 import time
+from socket import timeout
 from ..SCPI import scpi
 
 # main class
@@ -44,10 +45,12 @@ class FSW0000(scpi.scpi_family):
         """
         self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit))
         time.sleep(delay_time)
-        ret = self.com.recv()
-        if b"Data out of range" in ret:
-            raise ValueError(ret)
-        return
+        try:
+            ret = self.com.recv()
+            if b"Data out of range" in ret:
+                raise ValueError(ret)
+        except timeout:
+            pass
 
     def freq_query(self):
         """
