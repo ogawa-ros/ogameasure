@@ -43,7 +43,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(1.234, 'MHz')
         >>> s.freq_set(98765.4321, 'kHz')
         """
-        self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit))
+        self.com.send('FREQ {0}{1}\n'.format(freq, unit))
         time.sleep(delay_time)
         try:
             ret = self.com.recv()
