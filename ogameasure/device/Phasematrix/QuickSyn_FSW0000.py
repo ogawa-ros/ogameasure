@@ -13,6 +13,10 @@ class FSW0000(scpi.scpi_family):
 
     _scpi_enable = '*IDN? *RCL *RST'
 
+    freq_range_ghz = ()
+    power_default_dbm = 0  # Currently not used.
+    power_range_dbm = ()  # Currently not used.
+
     def _error_check(self):
         return
 
@@ -28,12 +32,12 @@ class FSW0000(scpi.scpi_family):
         < freq : float :  >
             A frequency value.
 
-        < unit : str : 'GHz','MHz','kHz','Hz' >
+        < unit : str : 'GHz','MHz','kHz','Hz','mlHz' >
             Specify the units of the <freq>.
-            'GHz', 'MHz', 'kHz' or 'Hz'. default = 'GHz'
+            'GHz', 'MHz', 'kHz', 'Hz' or 'mlHz'. default = 'GHz'
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -42,8 +46,26 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_set(1.234, 'MHz')
         >>> s.freq_set(98765.4321, 'kHz')
         """
-        self.com.send('FREQ {0:10f}{1}\n'.format(freq, unit))
-        return
+        if unit.lower() == "ghz":
+            freq_ghz = freq
+        elif unit.lower() == "mhz":
+            freq_ghz = freq / 1e3
+        elif unit.lower() == "khz":
+            freq_ghz = freq / 1e6
+        elif unit.lower() == "hz":
+            freq_ghz = freq / 1e9
+        elif unit.lower() == "mlhz":
+            freq_ghz = freq / 1e12
+        else:
+            raise ValueError(f"Invalid unit: {unit}")
+
+        if not (self.freq_range_ghz[0] <= freq_ghz <= self.freq_range_ghz[1]):
+            raise ValueError(
+                "Frequency must be "
+                f"between {self.freq_range_ghz[0]} and {self.freq_range_ghz[1]} GHz."
+            )
+
+        self.com.send('FREQ {0}{1}\n'.format(freq, unit))
 
     def freq_query(self):
         """
@@ -56,14 +78,14 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
+        Returns
         ========
         < freq : float :  >
             A frequency value in Hz.
 
         Examples
         ========
-        >>> s.freq_get()
+        >>> s.freq_query()
         +2.0000000e+10
         """
         self.com.send('FREQ?\n')
@@ -88,8 +110,8 @@ class FSW0000(scpi.scpi_family):
             Specify the units of the <pow>.
             'dBm'. default = 'dBm'
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -110,14 +132,14 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         < power : float :  >
             A power value in dBm.
 
         Examples
         ========
-        >>> s.freq_get()
+        >>> s.power_query()
         10.1
         """
         self.com.send('POW?\n')
@@ -139,8 +161,8 @@ class FSW0000(scpi.scpi_family):
         < output : str,int : 'ON','OFF',1,0 >
             Enable/disable the RF output.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -163,8 +185,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -184,8 +206,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         Nothing.
 
         Examples
@@ -205,8 +227,8 @@ class FSW0000(scpi.scpi_family):
         ====
         Nothing.
 
-        Returnes
-        ========
+        Returns
+        =======
         < output : int : 1,0 >
             Enable/disable the RF output.
             1 = ON, 0 = OFF
@@ -245,6 +267,12 @@ class FSW0000(scpi.scpi_family):
 
 class FSW0010(FSW0000):
     product_name = 'FSW-0010'
+    freq_range_ghz = (0.5, 10)
+    power_default_dbm = 15
+    power_range_dbm = (-25, 15)
 
 class FSW0020(FSW0000):
     product_name = 'FSW-0020'
+    freq_range_ghz = (0.5, 20)
+    power_default_dbm = 13
+    power_range_dbm = (-10, 13)
