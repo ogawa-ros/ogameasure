@@ -379,7 +379,7 @@ class model218_usb(object):
         """
         self.send('CRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1065,7 +1065,7 @@ class model218_usb(object):
         """
         self.send('KRDG? %d '%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.decode('utf-8').strip().split(','))
+        ret = list(map(float, ret.decode('utf-8').strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1374,7 +1374,7 @@ class model218_usb(object):
         """
         self.send('LRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
@@ -1580,7 +1580,7 @@ class model218_usb(object):
         """
         self.send('SRDG? %d'%(ch))
         ret = self.com.readline()
-        ret = map(float, ret.strip().split(','))
+        ret = list(map(float, ret.strip().split(',')))
         if ch!=0: ret = ret[0]
         return ret
 
