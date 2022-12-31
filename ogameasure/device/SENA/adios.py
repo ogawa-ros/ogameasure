@@ -90,7 +90,7 @@ class adios(object):
                 else: pass
                 #print temp
                 break
-            except communicator.CommunicatorTimeout:
+            except (communicator.CommunicatorTimeout, UnicodeDecodeError):
                 print('(error) att1')
                 continue
             continue
@@ -112,7 +112,7 @@ class adios(object):
                 if temp.find(':')==-1: continue
                 else: pass
                 break
-            except communicator.CommunicatorTimeout:
+            except (communicator.CommunicatorTimeout, UnicodeDecodeError):
                 print('(error) att2')
                 continue
             continue
