@@ -1,4 +1,5 @@
 import time
+from ...communicator import communicator
 
 class adios(object):
 
