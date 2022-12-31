@@ -28,6 +28,3 @@ class communicator(object):
 
     def readline(self):
         pass
-
-class CommunicatorTimeout(Exception):
-    pass
