@@ -1,6 +1,5 @@
 import time
 from serial import SerialTimeoutException
-from socket import TimeoutError
 
 class adios(object):
 
