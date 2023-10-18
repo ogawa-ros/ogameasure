@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ogameasure"
+version = "0.5.8"
+description = "Driver for SCPI device"
+authors = ["Shota Ueda <s7u27astr0@gmail.com>"]
+maintainers = ["Tatsumi Ishikawa <t.ishikawa@a.phys.nagoya-u.ac.jp>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/ogawa-ros/ogameasure"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.21.2"
+pyserial = "^3.5"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=1.1.0"]
+build-backend = "poetry.masonry.api"
