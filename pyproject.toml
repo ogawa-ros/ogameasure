@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ogameasure"
-version = "0.5.10"
+version = "0.5.11"
 description = "Driver for SCPI device"
 authors = ["Shota Ueda <s7u27astr0@gmail.com>"]
 maintainers = ["Tatsumi Ishikawa <t.ishikawa@a.phys.nagoya-u.ac.jp>"]
