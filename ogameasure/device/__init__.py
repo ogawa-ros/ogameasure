@@ -16,4 +16,11 @@ from . import TandD
 try:
     from . import Canon
 except ImportError:
-    pass
+    print(
+        "You can't import device.Canon.M100_raspi "
+        "because there isn't gphoto2 package."
+    )
+    print(
+        "Please install `libgphoto2` (C language package)"
+        "and run `poetry add gphoto2`"
+    )
