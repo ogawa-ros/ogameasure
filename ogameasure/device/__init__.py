@@ -22,5 +22,5 @@ except ImportError:
     )
     print(
         "Please install `libgphoto2` (C language package)"
-        "and run `poetry add gphoto2`"
+        "and run `pip install gphoto2`"
     )
