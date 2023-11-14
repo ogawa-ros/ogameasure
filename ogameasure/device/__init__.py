@@ -24,3 +24,4 @@ except ImportError:
         "Please install `libgphoto2` (C language package)"
         "and run `pip install gphoto2`"
     )
+    pass
