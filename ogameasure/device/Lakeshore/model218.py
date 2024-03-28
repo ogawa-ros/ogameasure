@@ -1102,12 +1102,12 @@ class model218(scpi.scpi_family):
         NOTE: Use 0 (all inputs) when reading two or more inputs
               at the maximum update rate of 16 rdg/s.
         """
-        self.com.send("KRDG? %d" % (ch))
+        self.com.send("KRDG? %d" % (0))
         time.sleep(delay_time)
-        ret = self.com.recv()
-        ret = list(map(float, ret.strip(b"\x00").split(b",")))
+        ret = self.com.readline()
+        ret = list(map(float, ret.strip("\x00").split(",")))
         if ch != 0:
-            ret = ret[0]
+            ret = ret[ch - 1]
         return ret
 
     def linear_equation_set(self, ch, m, source, b):
