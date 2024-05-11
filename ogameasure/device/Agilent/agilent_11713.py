@@ -112,6 +112,21 @@ class bank_number(object):
         pass
 
 
+# Attenuation Level
+# -----------------
+class attenuation_level(object):
+    available = [i for i in range(1, 12)]
+
+    def __init__(self, val):
+        if type(val) == int:
+            if not val in self.available:
+                raise ValueError(f"Attenuation level {val} is not supported.")
+            self.int = val
+        else:
+            raise TypeError("Attenuation level should be specified as int")
+        pass
+
+
 # ON - OFF
 # --------
 class on_off(object):
@@ -406,13 +421,45 @@ class agilent_11713(scpi.scpi_family):
         >>> a.att_level_set(11, "X")
         >>> a.att_level_set(2, "X", bank = 2)
         """
-        if 0 <= att <= 11 and type(att) == int:
-            self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
-        else:
-            msg = "Available level: 0, 1, 2, ..., 11,"
-            msg += f" while is {att} given."
-            raise ValueError(msg)
+        bank = bank_number(bank)
+        att = attenuation_level(att)
+        self.com.send(f"ATTenuator:BANK{bank.int}:{ch} {att}")
         return
+
+    def att_level_query(self, ch, bank=1):
+        """
+        ATTnuator:BANKn:X? : Query Attenuatoion Level
+        -----------------------------------------
+        Query the attenuation level for specified bank and channel.
+
+        Args
+        ====
+        < ch : str : "X, "Y" >
+            Specify the channel to check the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to check the attenuation level.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        < att : int : 1 - 11 >
+            Return attenuation level which is applyed to the bank and channel.
+            <att> is between 1 - 11 dB.
+
+        Examples
+        ========
+        >>> a.att_level_query("X")
+        "10"
+
+        >>> a.att_level_query("X", bank = 2)
+        "5"
+        """
+        bank = bank_number(bank)
+        self.com.send(f"ATTenuator:BANK{bank.int}:{ch}?")
+        ret = self.com.readline().strip()
+        return ret
 
     def supply_voltage_set(self, voltage, bank=1):
         """
