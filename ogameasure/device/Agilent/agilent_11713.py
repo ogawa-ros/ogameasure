@@ -377,6 +377,43 @@ class agilent_11713(scpi.scpi_family):
         ret = [int(r) for r in ret.strip().split(",")]
         return ret
 
+    def att_level_set(self, att, ch, bank=1):
+        """
+        ATTenuator:BANKn:X : Set Attenuation Lavel
+        -------------------------------------
+        Set the attenuation level for specified bank and channel.
+
+        Args
+        ====
+        < att : int  : 1, 2, 3 ... 11 >
+            Specify the attenuation level to apply.
+            <att> should be int and between 1 dB and 11 dB.
+
+        < ch : str : X, Y >
+            Specify the channel to apply the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to apply the voltage.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        Nothing.
+
+        Examples
+        ========
+        >>> a.att_level_set(11, "X")
+        >>> a.att_level_set(2, "X", bank = 2)
+        """
+        if 0 <= att <= 11 and type(att) == int:
+            self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
+        else:
+            msg = "Available level: 0, 1, 2, ..., 11,"
+            msg += f" while is {att} given."
+            raise ValueError(msg)
+        return
+
     def supply_voltage_set(self, voltage, bank=1):
         """
         :CONFigure:BANKn : Set Supply Voltage
