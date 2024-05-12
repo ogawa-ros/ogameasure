@@ -22,19 +22,19 @@ class mg3692c(scpi.scpi_family):
     power_default_dbm = 0
     power_range_dbm = (-20, 30)
 
-    def set_freq(self, freq, unit="GHz"):
+    def freq_set(self, freq, unit="GHz"):
         self.com.send("FREQ:CW %.10f %s" % (freq, unit))
         self.com.close()
         return
 
-    def get_freq(self):
+    def freq_query(self):
         self.com.send("FREQ:CW?")
         ret = self.com.readline()
         freq = float(ret) / 1e9
 
         return freq
 
-    def set_power(self, power=-20.0):
+    def power_set(self, power=-20.0):
         if -20.0 <= power <= 30.0:
             self.com.send("POW %f dBm" % (power))
         else:
@@ -43,20 +43,20 @@ class mg3692c(scpi.scpi_family):
             raise InvalidRangeError(msg)
         return
 
-    def get_power(self):
+    def power_query(self):
         self.com.send("POW?")
         ret = self.com.readline()
         power = float(ret)
         return power
 
-    def set_onoff(self, onoff=0):
+    def onoff_set(self, onoff=0):
         if onoff == 1:
             self.com.send("OUTP ON")
         else:
             self.com.send("OUTP OFF")
         return
 
-    def get_onoff(self):
+    def onoff_query(self):
         self.com.send("OUTP?")
         ret = self.com.readline()
         ret = int(ret)
