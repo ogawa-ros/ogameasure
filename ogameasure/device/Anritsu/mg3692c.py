@@ -49,11 +49,12 @@ class mg3692c(scpi.scpi_family):
         power = float(ret)
         return power
 
-    def onoff_set(self, onoff=0):
-        if onoff == 1:
-            self.com.send("OUTP ON")
-        else:
-            self.com.send("OUTP OFF")
+    def output_on(self):
+        self.com.send("OUTP ON")
+        return
+
+    def output_off(self):
+        self.com.send("OUTP OFF")
         return
 
     def onoff_query(self):
