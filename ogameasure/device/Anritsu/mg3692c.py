@@ -57,7 +57,7 @@ class mg3692c(scpi.scpi_family):
         self.com.send("OUTP OFF")
         return
 
-    def onoff_query(self):
+    def ouput_query(self):
         self.com.send("OUTP?")
         ret = self.com.readline()
         ret = int(ret)
