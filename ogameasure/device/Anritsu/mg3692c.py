@@ -16,7 +16,7 @@ class mg3692c(scpi.scpi_family):
     product_name = "MG3692C"
     classification = "Signal Generator"
 
-    _scpi_enable = "*IDN? *RCL *RST"  # TODO: check the available command
+    _scpi_enable = "*IDN? *RCL *RST"
 
     freq_range_ghz = (2, 20)
     power_default_dbm = 0
@@ -47,7 +47,6 @@ class mg3692c(scpi.scpi_family):
         self.com.send("POW?")
         ret = self.com.readline()
         power = float(ret)
-
         return power
 
     def set_onoff(self, onoff=0):
