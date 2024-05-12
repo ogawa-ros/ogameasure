@@ -30,7 +30,7 @@ class mg3692c(scpi.scpi_family):
     def freq_query(self):
         self.com.send("FREQ:CW?")
         ret = self.com.readline()
-        freq = float(ret) / 1e9
+        freq = float(ret)
 
         return freq
 
