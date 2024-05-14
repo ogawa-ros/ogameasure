@@ -41,11 +41,11 @@ class tpg261(device.device):
         raise Exception(f"Error: unexpected response. res = {res}.")
 
     def read_single_pressure(self, ch=1):
-        d = self._query(f"PR{ch}")
+        d = self._query(f"PR{ch} \r\n")
         return self._decode_pr_reply(d[0], d[1])
 
     def read_pressure(self):
-        d = self._query("PRX")
+        d = self._query("PRX \r\n")
         return {
             "ch1": self._decode_pr_reply(d[0], d[1]),
             "ch2": self._decode_pr_reply(d[2], d[3]),
@@ -69,7 +69,7 @@ class tpg261(device.device):
         }
 
     def start_continuous_output(self, mode=1):
-        self._command(f"COM,{mode}")
+        self._command(f"COM,{mode} \r\n")
         return
 
     def wait_and_receive_pressure_output(self):
@@ -88,7 +88,7 @@ class tpg261(device.device):
         return self.gauge_status_command()
 
     def gauge_status_command(self, ch1=0, ch2=0):
-        d = self._query(f"SEN,{ch1},{ch2}")
+        d = self._query(f"SEN,{ch1},{ch2} \r\n")
 
         status_msg = {
             "0": "unavailable",
@@ -107,7 +107,7 @@ class tpg261(device.device):
         }
 
     def gauge_identification_query(self):
-        d = self._query("TID")
+        d = self._query("TID \r\n")
 
         id_msg = {
             "TPR": "Pirani Gauge",
@@ -133,9 +133,9 @@ class tpg261(device.device):
 
     def display_channel_command(self, ch=None):
         if ch is None:
-            d = self._query("SCT")
+            d = self._query("SCT \r\n")
         else:
-            d = self._query(f"SCT,{ch}")
+            d = self._query(f"SCT,{ch} \r\n")
             pass
 
         display_msg = {
@@ -151,11 +151,11 @@ class tpg261(device.device):
         return self.display_channel_command()
 
     def reset_error_command(self):
-        d = self._query("RES,1")
+        d = self._query("RES,1 \r\n")
         return self._decode_res(d)
 
     def error_query(self):
-        d = self._query("RES")
+        d = self._query("RES \r\n")
         return self._decode_res(d)
 
     def _decode_res(self, errors):
@@ -191,9 +191,9 @@ class tpg261(device.device):
 
     def unit_command(self, unit=None):
         if unit is None:
-            d = self._query("UNI")
+            d = self._query("UNI \r\n")
         else:
-            d = self._query(f"UNI,{unit}")
+            d = self._query(f"UNI,{unit} \r\n")
             pass
 
         desc = {
@@ -211,9 +211,9 @@ class tpg261(device.device):
 
     def display_resolution_command(self, res=None):
         if res is None:
-            d = self._query("DCD")
+            d = self._query("DCD \r\n")
         else:
-            d = self._query(f"DCD,{res}")
+            d = self._query(f"DCD,{res} \r\n")
             pass
 
         desc = {
@@ -226,4 +226,4 @@ class tpg261(device.device):
         }
 
     def firmware_version_query(self):
-        return self._query("PNR")
+        return self._query("PNR \r\n")
