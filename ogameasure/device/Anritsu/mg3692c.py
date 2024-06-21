@@ -24,7 +24,6 @@ class mg3692c(scpi.scpi_family):
 
     def freq_set(self, freq, unit="GHz"):
         self.com.send("FREQ:CW %.10f %s" % (freq, unit))
-        self.com.close()
         return
 
     def freq_query(self):
@@ -57,7 +56,7 @@ class mg3692c(scpi.scpi_family):
         self.com.send("OUTP OFF")
         return
 
-    def ouput_query(self):
+    def output_query(self):
         self.com.send("OUTP?")
         ret = self.com.readline()
         ret = int(ret)
