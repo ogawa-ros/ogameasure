@@ -6,7 +6,7 @@ long_description = (Path(__file__).parent / "README.md").read_text()
 
 setuptools.setup(
     name="ogameasure",
-    version="0.5.14",
+    version="0.6.0",
     description="Driver for SCPI device",
     long_description=long_description,
     long_description_content_type="text/markdown",
