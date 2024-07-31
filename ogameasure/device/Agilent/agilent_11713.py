@@ -459,7 +459,7 @@ class agilent_11713(scpi.scpi_family):
         bank = bank_number(bank)
         self.com.send(f"ATTenuator:BANK{bank.int}:{ch}?")
         ret = self.com.readline().strip()
-        return ret
+        return float(ret)
 
     def supply_voltage_set(self, voltage, bank=1):
         """
