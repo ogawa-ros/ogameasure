@@ -421,9 +421,9 @@ class agilent_11713(scpi.scpi_family):
         >>> a.att_level_set(11, "X")
         >>> a.att_level_set(2, "X", bank = 2)
         """
-        bank = bank_number(bank)
-        att = attenuation_level(att)
-        self.com.send(f"ATTenuator:BANK{bank.int}:{ch} {att}")
+        bank = bank_number(bank).int
+        att = attenuation_level(att).int
+        self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
         return
 
     def att_level_query(self, ch, bank=1):
