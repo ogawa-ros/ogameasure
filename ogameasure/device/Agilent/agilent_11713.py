@@ -426,6 +426,13 @@ class agilent_11713(scpi.scpi_family):
         self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
         return
 
+    def attnuator_setting_query(self, ch, bank=1):
+        # TODO: add document.
+        bank = bank_number(bank)
+        self.com.send(f":CONFigure:BANK{bank.int}:{ch}?")
+        ret = self.com.readline().strip()
+        return ret
+
     def att_level_query(self, ch, bank=1):
         """
         ATTnuator:BANKn:X? : Query Attenuatoion Level
