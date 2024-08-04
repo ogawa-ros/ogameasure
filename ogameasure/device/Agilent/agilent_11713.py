@@ -392,6 +392,66 @@ class agilent_11713(scpi.scpi_family):
         ret = [int(r) for r in ret.strip().split(",")]
         return ret
 
+    def att_model_set(self, model, ch, bank=1):
+        """
+        :CONFigure:BANKn:X  : Query Attenuator Model
+        -----------------------------------------
+        Set the attenuator model for specified bank and channel.
+
+        Args
+        ====
+        < model : str: >
+
+        < ch : str : "X, "Y" >
+            Specify the channel to check the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to check the attenuation level.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        Nothing.
+
+        Examples
+        ========
+        >>> a.att_model_set()
+        """
+        bank = bank_number(bank)
+        self.com.send(f":CONFigure:BANK{bank.int}:{ch} {model}")
+        return
+
+    def att_model_query(self, ch, bank=1):
+        """
+        :CONFigure:BANKn:X? : Query Attenuator Model
+        -----------------------------------------
+        Query the attenuator model for specified bank and channel.
+
+        Args
+        ====
+        < ch : str : "X, "Y" >
+            Specify the channel to check the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to check the attenuation level.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        < model : str :>
+
+        Examples
+        ========
+        >>> a.att_model_query("X")
+        "AG8494"
+        """
+        bank = bank_number(bank)
+        self.com.send(f":CONFigure:BANK{bank.int}:{ch}?")
+        ret = self.com.readline().strip()
+        return ret
+
     def att_level_set(self, att, ch, bank=1):
         """
         ATTenuator:BANKn:X : Set Attenuation Lavel
@@ -425,13 +485,6 @@ class agilent_11713(scpi.scpi_family):
         att = attenuation_level(att).int
         self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
         return
-
-    def attnuator_setting_query(self, ch, bank=1):
-        # TODO: add document.
-        bank = bank_number(bank)
-        self.com.send(f":CONFigure:BANK{bank.int}:{ch}?")
-        ret = self.com.readline().strip()
-        return ret
 
     def att_level_query(self, ch, bank=1):
         """
