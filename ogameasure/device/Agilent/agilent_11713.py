@@ -115,7 +115,7 @@ class bank_number(object):
 # Attenuation Level
 # -----------------
 class attenuation_level(object):
-    available = [i for i in range(1, 12)]
+    available = [i for i in range(0, 12)]
 
     def __init__(self, val):
         if type(val) == int:
