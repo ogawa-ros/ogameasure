@@ -108,7 +108,7 @@ class bank_number(object):
                 raise ValueError("voltage %d is not supported." % (val))
             self.int = val
         else:
-            raise TypeError("voltage should be specified as int or str")
+            raise TypeError("voltage should be specified as int")
         pass
 
 
