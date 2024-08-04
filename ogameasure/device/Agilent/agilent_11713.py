@@ -112,12 +112,44 @@ class bank_number(object):
         pass
 
 
+# Attenuator type
+# ---------------
+class attenutor_type(object):
+    available = {
+        "NA": {"max": None, "step": None},
+        "AG8494g": {"max": 11, "step": 1},
+        "AG8495g": {"max": 70, "step": 10},
+        "AG8495k": {"max": 70, "step": 10},
+        "AG8496g": {"max": 110, "step": 10},
+        "AG8497k": {"max": 90, "step": 10},
+        "AG84904k": {"max": 11, "step": 1},
+        "AG84905m": {"max": 60, "step": 10},
+        "AG84906k": {"max": 90, "step": 10},
+        "AG84907k": {"max": 70, "step": 10},
+        "AG84908m": {"max": 65, "step": 5},
+    }
+
+    ailias = {"h": "g", "l": "k", "m": "k"}
+
+    def __init__(self, model):
+        if model[-1].lower() in self.ailias.keys():
+            model[:-1] + self.ailias[model[-1].lower()]
+        if model in self.available.keys():
+            if model == "NA":
+                raise ValueError("Attenuator setting is N/A.")
+            max = self.available[model]["max"]
+            step = self.available[model]["step"]
+            self.range = [i for i in range(0, max + step, step)]
+        else:
+            raise ValueError(f"Attenuator {model} is not supported.")
+        pass
+
+
 # Attenuation Level
 # -----------------
 class attenuation_level(object):
-    available = [i for i in range(0, 12)]
-
-    def __init__(self, val):
+    def __init__(self, model, val):
+        self.available = attenutor_type(model).range
         if type(val) == int:
             if not val in self.available:
                 raise ValueError(f"Attenuation level {val} is not supported.")
@@ -482,7 +514,8 @@ class agilent_11713(scpi.scpi_family):
         >>> a.att_level_set(2, "X", bank = 2)
         """
         bank = bank_number(bank).int
-        att = attenuation_level(att).int
+        model = self.att_model_query(ch, bank)
+        att = attenuation_level(model, att).int
         self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
         return
 
