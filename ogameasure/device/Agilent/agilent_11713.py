@@ -480,7 +480,8 @@ class agilent_11713(scpi.scpi_family):
 
         Returns
         =======
-        < model : str :>
+        < model : str>
+            This function return only model number, otherwise "AG8495K"
 
         Examples
         ========
