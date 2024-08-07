@@ -114,7 +114,7 @@ class bank_number(object):
 
 # Attenuator type
 # ---------------
-class attenutor_type(object):
+class attenuator_type(object):
     available = {
         "NA": {"max": None, "step": None},
         "AG8494g": {"max": 11, "step": 1},
@@ -140,6 +140,7 @@ class attenutor_type(object):
             max = self.available[model]["max"]
             step = self.available[model]["step"]
             self.range = [i for i in range(0, max + step, step)]
+            self.model = model
         else:
             raise ValueError(f"Attenuator {model} is not supported.")
         pass
@@ -433,6 +434,12 @@ class agilent_11713(scpi.scpi_family):
         Args
         ====
         < model : str: >
+            Attenuator model which you want to set.
+            Following model are available:
+                "NA", "AG8494g", "AG8494h", "AG8495g", "AG8495h", "AG8495k",
+                "AG8496g", "AG8496h", "AG8497k", "AG84904k", "AG84904l",
+                "AG84904m", "AG84905m", "AG84906k", "AG84906l", "AG84907k",
+                "AG84907l", "AG84908m"
 
         < ch : str : "X, "Y" >
             Specify the channel to check the attenuation level.
@@ -448,9 +455,10 @@ class agilent_11713(scpi.scpi_family):
 
         Examples
         ========
-        >>> a.att_model_set()
+        >>> a.att_model_set("8494G", "X")
         """
         bank = bank_number(bank)
+        model = attenuator_type(model).model
         self.com.send(f":CONFigure:BANK{bank.int}:{ch} {model}")
         return
 
