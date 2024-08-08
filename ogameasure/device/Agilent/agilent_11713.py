@@ -133,7 +133,7 @@ class attenuator_type(object):
 
     def __init__(self, model):
         if model[-1].lower() in self.ailias.keys():
-            model[:-1] + self.ailias[model[-1].lower()]
+            model = model[:-1] + self.ailias[model[-1].lower()]
         if model in self.available.keys():
             if model == "NA":
                 raise ValueError("Attenuator setting is N/A.")
