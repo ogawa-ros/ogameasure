@@ -150,7 +150,7 @@ class attenuator_type(object):
 # -----------------
 class attenuation_level(object):
     def __init__(self, model, val):
-        self.available = attenutor_type(model).range
+        self.available = attenuator_type(model).range
         if type(val) == int:
             if not val in self.available:
                 raise ValueError(f"Attenuation level {val} is not supported.")
