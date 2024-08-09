@@ -149,6 +149,7 @@ class attenuation_level(object):
     range_list = {
         "NA": {"max": None, "step": None},
         "AG8494": {"max": 11, "step": 1},
+        "AG8495k": {"max": 70, "step": 10},
         "AG8495": {"max": 70, "step": 10},
         "AG8496": {"max": 110, "step": 10},
         "AG8497": {"max": 90, "step": 10},
@@ -157,9 +158,6 @@ class attenuation_level(object):
         "AG84906": {"max": 90, "step": 10},
         "AG84907": {"max": 70, "step": 10},
         "AG84908": {"max": 65, "step": 5},
-    }
-    escape_range = {
-        "AG8495k": {"max": 70, "step": 10},
     }
 
     def __init__(self, model, val):
