@@ -138,8 +138,8 @@ class attenuator_type(object):
                 if model_parse == "NA":
                     raise ValueError("Attenuator setting is N/A.")
                 self.model = model_parse
-        else:
-            raise ValueError(f"Attenuator {model} is not supported.")
+            else:
+                raise ValueError(f"Attenuator {model} is not supported.")
         pass
 
 
