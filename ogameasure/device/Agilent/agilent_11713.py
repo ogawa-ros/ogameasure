@@ -134,12 +134,15 @@ class attenuator_type(object):
     def __init__(self, model):
         if model[-1].lower() in self.ailias.keys():
             model_parse = model[:-1] + self.ailias[model[-1].lower()]
-            if model_parse in self.available:
-                if model_parse == "NA":
-                    raise ValueError("Attenuator setting is N/A.")
-                self.model = model_parse
+        else:
+            model_parse = model
+        if model_parse in self.available:
+            if model_parse == "NA":
+                raise ValueError("Attenuator setting is N/A.")
             else:
-                raise ValueError(f"Attenuator {model} is not supported.")
+                self.model = model_parse
+        else:
+            raise ValueError(f"Attenuator {model} is not supported.")
         pass
 
 
