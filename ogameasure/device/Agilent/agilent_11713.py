@@ -115,42 +115,63 @@ class bank_number(object):
 # Attenuator type
 # ---------------
 class attenuator_type(object):
-    available = {
-        "NA": {"max": None, "step": None},
-        "AG8494g": {"max": 11, "step": 1},
-        "AG8495g": {"max": 70, "step": 10},
-        "AG8495k": {"max": 70, "step": 10},
-        "AG8496g": {"max": 110, "step": 10},
-        "AG8497k": {"max": 90, "step": 10},
-        "AG84904k": {"max": 11, "step": 1},
-        "AG84905m": {"max": 60, "step": 10},
-        "AG84906k": {"max": 90, "step": 10},
-        "AG84907k": {"max": 70, "step": 10},
-        "AG84908m": {"max": 65, "step": 5},
-    }
+    available = [
+        "NA",
+        "AG8494g",
+        "AG8495g",
+        "AG8495k",
+        "AG8496g",
+        "AG8497k",
+        "AG84904k",
+        "AG84905m",
+        "AG84906k",
+        "AG84907k",
+        "AG84908m",
+    ]
 
     ailias = {"h": "g", "l": "k", "m": "k"}
 
     def __init__(self, model):
         if model[-1].lower() in self.ailias.keys():
-            model = model[:-1] + self.ailias[model[-1].lower()]
-        if model in self.available.keys():
-            if model == "NA":
+            model_parse = model[:-1] + self.ailias[model[-1].lower()]
+        if model_parse in self.available.keys():
+            if model_parse == "NA":
                 raise ValueError("Attenuator setting is N/A.")
-            max = self.available[model]["max"]
-            step = self.available[model]["step"]
-            self.range = [i for i in range(0, max + step, step)]
-            self.model = model
+            self.model = model_parse
         else:
             raise ValueError(f"Attenuator {model} is not supported.")
+        pass
+
+    def model_range(self):
+        max = self.available[self.model]["max"]
+        step = self.available[self.model]["step"]
+        self.range = [i for i in range(0, max + step, step)]
         pass
 
 
 # Attenuation Level
 # -----------------
 class attenuation_level(object):
+    range_list = {
+        "NA": {"max": None, "step": None},
+        "AG8494": {"max": 11, "step": 1},
+        "AG8495": {"max": 70, "step": 10},
+        "AG8496": {"max": 110, "step": 10},
+        "AG8497": {"max": 90, "step": 10},
+        "AG84904": {"max": 11, "step": 1},
+        "AG84905": {"max": 60, "step": 10},
+        "AG84906": {"max": 90, "step": 10},
+        "AG84907": {"max": 70, "step": 10},
+        "AG84908": {"max": 65, "step": 5},
+    }
+    escape_range = {
+        "AG8495k": {"max": 70, "step": 10},
+    }
+
     def __init__(self, model, val):
-        self.available = attenuator_type(model).range
+        max = self.range_list[model]["max"]
+        step = self.range_list[model]["step"]
+        self.range = [i for i in range(0, max + step, step)]
         if type(val) == int:
             if not val in self.available:
                 raise ValueError(f"Attenuation level {val} is not supported.")
