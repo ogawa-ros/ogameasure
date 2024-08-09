@@ -142,12 +142,6 @@ class attenuator_type(object):
             raise ValueError(f"Attenuator {model} is not supported.")
         pass
 
-    def model_range(self):
-        max = self.available[self.model]["max"]
-        step = self.available[self.model]["step"]
-        self.range = [i for i in range(0, max + step, step)]
-        pass
-
 
 # Attenuation Level
 # -----------------
@@ -173,7 +167,7 @@ class attenuation_level(object):
         step = self.range_list[model]["step"]
         self.range = [i for i in range(0, max + step, step)]
         if type(val) == int:
-            if not val in self.available:
+            if not val in self.range:
                 raise ValueError(f"Attenuation level {val} is not supported.")
             self.int = val
         else:
