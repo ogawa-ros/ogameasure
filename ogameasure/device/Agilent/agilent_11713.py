@@ -152,7 +152,7 @@ class attenuation_level(object):
     range_list = {
         "NA": {"max": None, "step": None},
         "AG8494": {"max": 11, "step": 1},
-        "AG8495k": {"max": 70, "step": 10},
+        "AG8495K": {"max": 70, "step": 10},
         "AG8495": {"max": 70, "step": 10},
         "AG8496": {"max": 110, "step": 10},
         "AG8497": {"max": 90, "step": 10},
