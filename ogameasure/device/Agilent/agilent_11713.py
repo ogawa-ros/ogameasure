@@ -108,18 +108,67 @@ class bank_number(object):
                 raise ValueError("voltage %d is not supported." % (val))
             self.int = val
         else:
-            raise TypeError("voltage should be specified as int or str")
+            raise TypeError("voltage should be specified as int")
+        pass
+
+
+# Attenuator type
+# ---------------
+class attenuator_type(object):
+    available = [
+        "NA",
+        "AG8494g",
+        "AG8495g",
+        "AG8495k",
+        "AG8496g",
+        "AG8497k",
+        "AG84904k",
+        "AG84905m",
+        "AG84906k",
+        "AG84907k",
+        "AG84908m",
+    ]
+
+    ailias = {"h": "g", "l": "k", "m": "k"}
+
+    def __init__(self, model):
+        if model[-1].lower() in self.ailias.keys():
+            model_parse = model[:-1] + self.ailias[model[-1].lower()]
+        else:
+            model_parse = model
+        if model_parse in self.available:
+            if model_parse == "NA":
+                raise ValueError("Attenuator setting is N/A.")
+            else:
+                self.model = model_parse
+        else:
+            raise ValueError(f"Attenuator {model} is not supported.")
         pass
 
 
 # Attenuation Level
 # -----------------
 class attenuation_level(object):
-    available = [i for i in range(1, 12)]
+    range_list = {
+        "NA": {"max": None, "step": None},
+        "AG8494": {"max": 11, "step": 1},
+        "AG8495K": {"max": 70, "step": 10},
+        "AG8495": {"max": 70, "step": 10},
+        "AG8496": {"max": 110, "step": 10},
+        "AG8497": {"max": 90, "step": 10},
+        "AG84904": {"max": 11, "step": 1},
+        "AG84905": {"max": 60, "step": 10},
+        "AG84906": {"max": 90, "step": 10},
+        "AG84907": {"max": 70, "step": 10},
+        "AG84908": {"max": 65, "step": 5},
+    }
 
-    def __init__(self, val):
+    def __init__(self, model, val):
+        max = self.range_list[model]["max"]
+        step = self.range_list[model]["step"]
+        self.range = [i for i in range(0, max + step, step)]
         if type(val) == int:
-            if not val in self.available:
+            if not val in self.range:
                 raise ValueError(f"Attenuation level {val} is not supported.")
             self.int = val
         else:
@@ -392,6 +441,74 @@ class agilent_11713(scpi.scpi_family):
         ret = [int(r) for r in ret.strip().split(",")]
         return ret
 
+    def att_model_set(self, model, ch, bank=1):
+        """
+        :CONFigure:BANKn:X  : Query Attenuator Model
+        -----------------------------------------
+        Set the attenuator model for specified bank and channel.
+
+        Args
+        ====
+        < model : str: >
+            Attenuator model which you want to set.
+            Following model are available:
+                "NA", "AG8494g", "AG8494h", "AG8495g", "AG8495h", "AG8495k",
+                "AG8496g", "AG8496h", "AG8497k", "AG84904k", "AG84904l",
+                "AG84904m", "AG84905m", "AG84906k", "AG84906l", "AG84907k",
+                "AG84907l", "AG84908m"
+
+        < ch : str : "X, "Y" >
+            Specify the channel to check the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to check the attenuation level.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        Nothing.
+
+        Examples
+        ========
+        >>> a.att_model_set("8494G", "X")
+        """
+        bank = bank_number(bank)
+        model = attenuator_type(model).model
+        self.com.send(f":CONFigure:BANK{bank.int}:{ch} {model}")
+        return
+
+    def att_model_query(self, ch, bank=1):
+        """
+        :CONFigure:BANKn:X? : Query Attenuator Model
+        -----------------------------------------
+        Query the attenuator model for specified bank and channel.
+
+        Args
+        ====
+        < ch : str : "X, "Y" >
+            Specify the channel to check the attenuation level.
+            ch = "X" or "Y".
+
+        < bank : int : 1,2 >
+            Specify the bank to check the attenuation level.
+            bank = 1 or 2. default is bank = 1.
+
+        Returns
+        =======
+        < model : str>
+            This function return only model number, otherwise "AG8495K"
+
+        Examples
+        ========
+        >>> a.att_model_query("X")
+        "AG8494"
+        """
+        bank = bank_number(bank)
+        self.com.send(f":CONFigure:BANK{bank.int}:{ch}?")
+        ret = self.com.readline().strip()
+        return ret
+
     def att_level_set(self, att, ch, bank=1):
         """
         ATTenuator:BANKn:X : Set Attenuation Lavel
@@ -422,7 +539,8 @@ class agilent_11713(scpi.scpi_family):
         >>> a.att_level_set(2, "X", bank = 2)
         """
         bank = bank_number(bank).int
-        att = attenuation_level(att).int
+        model = self.att_model_query(ch, bank)
+        att = attenuation_level(model, att).int
         self.com.send(f"ATTenuator:BANK{bank}:{ch} {att}")
         return
 
