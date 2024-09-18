@@ -19,8 +19,11 @@ class azd_ad(device.device):
         start_command = create_query("0106007D0010")
         self.com.send_raw(start_command)
         time.sleep(1)
+        _ = self.com.recv()
         end_command = create_query("0106007D0000")
         self.com.send_raw(end_command)
+        time.sleep(0.05)
+        _ = self.com.recv()
         return
 
     def direct_operation(self, location=11000, speed=80000, acc=1000000):
@@ -51,13 +54,17 @@ class azd_ad(device.device):
             + "000003E8 00000001"
         )
         self.com.send_raw(command)
+        time.sleep(0.05)
+        _ = self.com.recv()
         return
 
     def get_current_postition(self):
-        position_command = create_query("010318420002")
-        self.com.send_raw(position_command)
-        msg = self.com.recv()
-        return msg[10:17]
+        position_command = create_query("010300CC0002")
+        self.send_raw(position_command)
+        time.sleep(0.05)
+        msg = self.com.recv().hex()
+        position = int(msg[10:14], 16)
+        return position
 
 
 def crc16(command):
