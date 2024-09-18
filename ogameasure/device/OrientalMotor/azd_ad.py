@@ -33,6 +33,7 @@ class azd_ad(device.device):
         step
 
         speed : int
+        speed
 
         acc : int
         acceleration
