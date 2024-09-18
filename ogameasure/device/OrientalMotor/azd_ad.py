@@ -60,7 +60,7 @@ class azd_ad(device.device):
 
     def get_current_postition(self):
         position_command = create_query("010300CC0002")
-        self.send_raw(position_command)
+        self.com.send_raw(position_command)
         time.sleep(0.05)
         msg = self.com.recv().hex()
         position = int(msg[10:14], 16)
