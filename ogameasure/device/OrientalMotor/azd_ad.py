@@ -53,6 +53,12 @@ class azd_ad(device.device):
         self.com.send_raw(command)
         return
 
+    def get_current_postition(self):
+        position_command = create_query("010318420002")
+        self.com.send_raw(position_command)
+        msg = self.com.recv()
+        return msg[10:17]
+
 
 def crc16(command):
     """
