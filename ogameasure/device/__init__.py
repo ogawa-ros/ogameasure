@@ -8,6 +8,7 @@ from . import ELVA1
 from . import HEIDENHAIN
 from . import KIKUSUI
 from . import Lakeshore
+from . import OrientalMotor
 from . import Pfeiffer
 from . import Phasematrix
 from . import SENA
