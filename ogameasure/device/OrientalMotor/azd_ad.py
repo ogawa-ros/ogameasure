@@ -17,10 +17,10 @@ class azd_ad(device.device):
 
         """
         start_command = create_query("0106007D0010")
-        self.com.sendall(start_command)
+        self.com.send(start_command)
         time.sleep(1)
         end_command = create_query("0106007D0000")
-        self.com.sendall(end_command)
+        self.com.send(end_command)
         return
 
     def direct_operation(self, location=11000, speed=80000, acc=1000000):
@@ -49,7 +49,7 @@ class azd_ad(device.device):
             + acc_hex
             + "000003E8 00000001"
         )
-        self.com.sendall(command)
+        self.com.send(command)
         return
 
 
