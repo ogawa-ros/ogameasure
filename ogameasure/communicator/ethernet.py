@@ -3,17 +3,17 @@ from . import communicator
 
 
 class ethernet(communicator.communicator):
-    method = 'ethernet'
+    method = "ethernet"
 
-    host = ''
+    host = ""
     port = 0
     timeout = 3
-    family = ''
-    type = ''
+    family = ""
+    type = ""
 
-    def __init__(self, host, port, timeout=3,
-                 family=socket.AF_INET,
-                 type=socket.SOCK_STREAM):
+    def __init__(
+        self, host, port, timeout=3, family=socket.AF_INET, type=socket.SOCK_STREAM
+    ):
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -22,7 +22,7 @@ class ethernet(communicator.communicator):
         pass
 
     def open(self):
-        #print('open', self.host, self.port)
+        # print('open', self.host, self.port)
         if self.connection == False:
             self.sock = socket.socket(self.family, self.type)
             self.sock.settimeout(self.timeout)
@@ -46,10 +46,13 @@ class ethernet(communicator.communicator):
         return
 
     def send(self, msg):
-        #self.sock.send(msg)
-        self.sock.send((msg+self.terminator).encode())
+        self.sock.send((msg + self.terminator).encode())
         return
-        
+
+    def send_raw(self, msg):
+        self.sock.send(msg + (self.terminator).encode())
+        return
+
     def recv(self, byte=1024):
         ret = self.sock.recv(byte)
         return ret
