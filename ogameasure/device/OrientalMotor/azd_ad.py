@@ -81,7 +81,7 @@ class azd_ad(device.device):
         return alarm_code
 
     def alarm_reset(self):
-        reset_command = create_query("01100180000020000")
+        reset_command = create_query("0110018000001020000")
         self.com.send_raw(reset_command)
         time.sleep(0.05)
         _ = self.com.recv().hex()
@@ -107,14 +107,16 @@ class azd_ad(device.device):
         self.com.send_raw(sim_command)
         time.sleep(0.05)
         _ = self.com.recv()
-        return _
+        print(_)
+        return
 
     def simulator_off(self):
         sim_command = create_query("011003FE0001020000")
         self.com.send_raw(sim_command)
         time.sleep(0.05)
         _ = self.com.recv()
-        return _
+        print(_)
+        return
 
     def simulator_query(self):
         sim_command = create_query("010303FE0002")
@@ -122,6 +124,7 @@ class azd_ad(device.device):
         time.sleep(0.05)
         msg = self.com.recv().hex()
         mode = int(msg[10:14], 16)
+        print(msg)
         return mode
 
 
