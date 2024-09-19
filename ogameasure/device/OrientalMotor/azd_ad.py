@@ -110,7 +110,7 @@ class azd_ad(device.device):
         self.com.send_raw(sim_command)
         time.sleep(0.05)
         _ = self.com.recv().hex()
-        return
+        return _
 
     def simulator_query(self):
         sim_command = create_query("010303FE0002")
