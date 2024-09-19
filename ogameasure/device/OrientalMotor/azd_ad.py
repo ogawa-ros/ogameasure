@@ -102,11 +102,15 @@ class azd_ad(device.device):
         _ = self.com.recv().hex()
         return
 
-    def simulator_onoff(self, onoff: bool):
-        if onoff:
-            sim_command = create_query("011003FE0002040001")
-        else:
-            sim_command = create_query("011003FE0002040000")
+    def simulator_on(self):
+        sim_command = create_query("011003FE0002040001")
+        self.com.send_raw(sim_command)
+        time.sleep(0.05)
+        _ = self.com.recv()
+        return _
+
+    def simulator_off(self):
+        sim_command = create_query("011003FE0002040000")
         self.com.send_raw(sim_command)
         time.sleep(0.05)
         _ = self.com.recv()
