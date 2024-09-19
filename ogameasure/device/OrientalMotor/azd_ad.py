@@ -8,7 +8,6 @@ class azd_ad(device.device):
     classification = "Motor Controller"
 
     def initialize(self):
-        self.simulator_off()
         self.zero_return()
         self.alarm_reset()
         self.alarm_clear()
@@ -101,31 +100,6 @@ class azd_ad(device.device):
         time.sleep(0.05)
         _ = self.com.recv().hex()
         return
-
-    def simulator_on(self):
-        sim_command = create_query("011003FE00020400000002")
-        self.com.send_raw(sim_command)
-        time.sleep(0.05)
-        _ = self.com.recv().hex()
-        print(_)
-        return
-
-    def simulator_off(self):
-        sim_command = create_query("011003FE00020400000000")
-        self.com.send_raw(sim_command)
-        time.sleep(0.05)
-        _ = self.com.recv().hex()
-        print(_)
-        return
-
-    def simulator_query(self):
-        sim_command = create_query("010303FE0002")
-        self.com.send_raw(sim_command)
-        time.sleep(0.05)
-        msg = self.com.recv().hex()
-        mode = int(msg[10:14], 16)
-        print(msg)
-        return mode
 
 
 def crc16(command):
