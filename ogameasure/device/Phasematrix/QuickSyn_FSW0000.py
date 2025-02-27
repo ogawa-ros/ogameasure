@@ -6,12 +6,13 @@ from ..SCPI import scpi
 
 delay_time = 0.1
 
-class FSW0000(scpi.scpi_family):
-    manufacturer = 'Phase Matrix'
-    product_name = 'QuickSyn FSW Series'
-    classification = 'Signal Generator'
 
-    _scpi_enable = '*IDN? *RCL *RST'
+class FSW0000(scpi.scpi_family):
+    manufacturer = "Phase Matrix"
+    product_name = "QuickSyn FSW Series"
+    classification = "Signal Generator"
+
+    _scpi_enable = "*IDN? *RCL *RST"
 
     freq_range_ghz = ()
     power_default_dbm = 0  # Currently not used.
@@ -20,7 +21,7 @@ class FSW0000(scpi.scpi_family):
     def _error_check(self):
         return
 
-    def freq_set(self, freq, unit='GHz'):
+    def freq_set(self, freq, unit="GHz"):
         """
         FREQ : Set CW frequency
         -----------------------
@@ -65,7 +66,7 @@ class FSW0000(scpi.scpi_family):
                 f"between {self.freq_range_ghz[0]} and {self.freq_range_ghz[1]} GHz."
             )
 
-        self.com.send('FREQ {0}{1}\n'.format(freq, unit))
+        self.com.send("FREQ {0}{1}\n".format(freq, unit))
 
     def freq_query(self):
         """
@@ -88,14 +89,14 @@ class FSW0000(scpi.scpi_family):
         >>> s.freq_query()
         +2.0000000e+10
         """
-        self.com.send('FREQ?\n')
+        self.com.send("FREQ?\n")
         time.sleep(delay_time)
-        ret = self.com.recv()
+        ret = self.com.readline()
         ret = float(ret)
-        ret = ret / 1000.
+        ret = ret / 1000.0
         return ret
 
-    def power_set(self, pow, unit='dBm'):
+    def power_set(self, pow, unit="dBm"):
         """
         POW : Set RF output power
         -------------------------
@@ -119,7 +120,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.power_set(-130)
         >>> s.power_set(-10.2, 'dBm')
         """
-        self.com.send('POW {0:f} {1}\n'.format(pow, unit))
+        self.com.send("POW {0:f} {1}\n".format(pow, unit))
         return
 
     def power_query(self):
@@ -142,9 +143,9 @@ class FSW0000(scpi.scpi_family):
         >>> s.power_query()
         10.1
         """
-        self.com.send('POW?\n')
+        self.com.send("POW?\n")
         time.sleep(delay_time)
-        ret = self.com.recv()
+        ret = self.com.readline()
         ret = float(ret)
         return ret
 
@@ -172,7 +173,7 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_set('OFF')
         >>> s.output_set(0)
         """
-        self.com.send('OUTP:STAT {0}\n'.format(str(output)))
+        self.com.send("OUTP:STAT {0}\n".format(str(output)))
         return
 
     def output_on(self):
@@ -193,7 +194,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_on()
         """
-        self.com.send('OUTP:STAT ON\n')
+        self.com.send("OUTP:STAT ON\n")
         return
 
     def output_off(self):
@@ -214,7 +215,7 @@ class FSW0000(scpi.scpi_family):
         ========
         >>> s.output_off()
         """
-        self.com.send('OUTP:STAT OFF\n')
+        self.com.send("OUTP:STAT OFF\n")
         return
 
     def output_query(self):
@@ -239,24 +240,27 @@ class FSW0000(scpi.scpi_family):
         >>> s.output_query()
         1
         """
-        self.com.send('OUTP:STAT?\n')
+        self.com.send("OUTP:STAT?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
-        if ret.upper().find('ON') != -1: ret = 1
-        elif ret.upper().find('OFF') != -1: ret = 0
-        else: ret = -1
+        if ret.upper().find("ON") != -1:
+            ret = 1
+        elif ret.upper().find("OFF") != -1:
+            ret = 0
+        else:
+            ret = -1
         return ret
 
     def use_internal_reference_source(self):
-        self.com.send('ROSC:SOUR INT')
+        self.com.send("ROSC:SOUR INT")
         return
 
     def use_external_reference_source(self):
-        self.com.send('ROSC:SOUR EXT')
+        self.com.send("ROSC:SOUR EXT")
         return
 
     def reference_source_query(self):
-        self.com.send('ROSC:SOUR?\n')
+        self.com.send("ROSC:SOUR?\n")
         time.sleep(delay_time)
         ret = self.com.readline().strip()
         return ret
@@ -266,13 +270,14 @@ class FSW0000(scpi.scpi_family):
 
 
 class FSW0010(FSW0000):
-    product_name = 'FSW-0010'
+    product_name = "FSW-0010"
     freq_range_ghz = (0.5, 10)
     power_default_dbm = 15
     power_range_dbm = (-25, 15)
 
+
 class FSW0020(FSW0000):
-    product_name = 'FSW-0020'
+    product_name = "FSW-0020"
     freq_range_ghz = (0.5, 20)
     power_default_dbm = 13
     power_range_dbm = (-10, 13)
