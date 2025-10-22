@@ -89,7 +89,7 @@ class Keithley_2450(scpi.scpi_family):
         self.com.send("""READ? "%s", SOUR, READ\n"""%buf_name)
         return
 
-    def get_all(self, buf_name) :
+    def get_vi(self, buf_name) :
         self.com.send("""TRAC:DATA? 1, 10, "%s", SOUR,READ\n"""%buf_name)
         time.sleep(delay_time)
         ret = self.com.readline()
