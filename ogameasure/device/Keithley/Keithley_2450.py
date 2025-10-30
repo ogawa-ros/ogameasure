@@ -39,6 +39,8 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def set_voltage(self, volt): #mV
+        volt = volt / 1000
+        self.com.send(":SOURce:VOLT %f\n"%volt)
         return
 
     def current_query(self):
