@@ -21,6 +21,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def source_delay(self, delay) :
+        self.com.send("SOUR:VOLT:DEL %f\n"%delay)
         return
 
     def limit(self, limit): #mA
