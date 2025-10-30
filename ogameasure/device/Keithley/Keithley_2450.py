@@ -62,6 +62,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def clear_buf(self, buf):
+        self.com.send(""":TRACe:CLEar "%s"\n"""%buf)
         return
 
     def delete_buf(self, buf):
