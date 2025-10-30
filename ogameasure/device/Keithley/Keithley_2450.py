@@ -90,6 +90,9 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def get_vi(self, buf_name):
+        self.com.send("""TRAC:DATA? 1, 10, "%s", SOUR, READ\n"""%buf_name)
+        time.sleep(delay_time)
+        ret = self.com.readline()
         return
 
     def close(self):
