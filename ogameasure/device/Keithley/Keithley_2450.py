@@ -44,6 +44,10 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def current_query(self):
+        self.com.send(":MEASure:CURRent?\n")
+        time.sleep(delay_time)
+        ret = self.com.readline()
+        ret = float(ret)
         return
     
     def volt_query(self):
