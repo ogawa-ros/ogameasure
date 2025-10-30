@@ -66,6 +66,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def delete_buf(self, buf):
+        self.com.send(""":TRACe:DELete "%s"\n"""%buf)
         return
 
     def read_back_on(self):
