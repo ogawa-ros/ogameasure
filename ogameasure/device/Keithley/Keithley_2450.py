@@ -17,6 +17,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def output_off(self):
+        self.com.send(":OUTP OFF\n")
         return
 
     def source_delay(self, delay) :
