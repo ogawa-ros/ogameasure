@@ -34,6 +34,8 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def limit_volt(self, limit): #mV
+        limit = limit / 1000
+        self.com.send("SOUR:VOLT:PROT PROT%f\n"%limit)
         return
 
     def set_voltage(self, volt): #mV
