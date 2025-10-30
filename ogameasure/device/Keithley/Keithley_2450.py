@@ -30,6 +30,7 @@ class Keithley_2450(scpi.scpi_family):
         return
     
     def source_volt(self):
+        self.com.send("SOUR:FUNC VOLT\n")
         return
 
     def limit_volt(self, limit): #mV
