@@ -9,6 +9,7 @@ class Keithley_2450(scpi.scpi_family):
     classification = "Source Meter"
 
     def f_wire(self):
+        self.com.send(":SENSe:CURRent:RSENse ON\n")
         return
 
     def output_on(self):
