@@ -70,6 +70,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def read_back_on(self):
+        self.com.send("SOUR:VOLT:READ:BACK ON\n")
         return
 
     def read_back_off(self):
