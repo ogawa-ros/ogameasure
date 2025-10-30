@@ -86,6 +86,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def read_vi(self ,buf_name):
+        self.com.send("""READ? "%s", SOUR, READ\n"""%buf_name)
         return
 
     def get_vi(self, buf_name):
