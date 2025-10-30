@@ -25,6 +25,8 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def limit(self, limit): #mA
+        limit = limit / 1000
+        self.com.send(":SOURce:VOLTage:ILIMit %f\n"%limit)
         return
     
     def source_volt(self):
