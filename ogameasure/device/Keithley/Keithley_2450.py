@@ -74,6 +74,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def read_back_off(self):
+        self.com.send("SOUR:VOLT:READ:BACK OFF\n")
         return
 
     def digits_num(self, num):
