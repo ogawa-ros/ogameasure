@@ -58,6 +58,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def creat_buf(self, buf):
+        self.com.send("""TRAC:MAKE "%s", 1000000\n"""%buf)
         return
 
     def clear_buf(self, buf):
