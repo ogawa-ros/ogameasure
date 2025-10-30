@@ -82,6 +82,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def read_num(self, count):
+        self.com.send("COUNT %f\n"%count)
         return
 
     def read_vi(self ,buf_name):
