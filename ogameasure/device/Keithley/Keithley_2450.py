@@ -13,6 +13,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def output_on(self):
+        self.com.send(":OUTP ON\n")
         return
 
     def output_off(self):
