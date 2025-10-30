@@ -78,6 +78,7 @@ class Keithley_2450(scpi.scpi_family):
         return
 
     def digits_num(self, num):
+        self.com.send(":FORMat:ASCii:PRECision %f\n"%num)
         return
 
     def read_num(self, count):
