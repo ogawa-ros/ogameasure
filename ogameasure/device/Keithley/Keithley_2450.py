@@ -48,14 +48,14 @@ class Keithley_2450(scpi.scpi_family):
         time.sleep(delay_time)
         ret = self.com.readline()
         ret = float(ret)
-        return
+        return ret
     
     def volt_query(self):
         self.com.send(":MEASure:VOLTage?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
         ret = float(ret)
-        return
+        return ret
 
     def creat_buf(self, buf):
         self.com.send("""TRAC:MAKE "%s", 1000000\n"""%buf)
@@ -93,7 +93,7 @@ class Keithley_2450(scpi.scpi_family):
         self.com.send("""TRAC:DATA? 1, 10, "%s", SOUR, READ\n"""%buf_name)
         time.sleep(delay_time)
         ret = self.com.readline()
-        return
+        return ret
 
     def close(self):
         self.com.close()
