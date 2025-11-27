@@ -50,7 +50,7 @@ class Keithley_2450(scpi.scpi_family):
         ret = float(ret)
         return ret
     
-    def volt_query(self):
+    def voltage_query(self):
         self.com.send(":MEASure:VOLTage?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
