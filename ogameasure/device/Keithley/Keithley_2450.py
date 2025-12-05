@@ -47,7 +47,7 @@ class Keithley_2450(scpi.scpi_family):
         self.com.send(":MEASure:CURRent?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
-        ret = float(ret)
+        ret = float(ret) * 1000
         return ret
     
     def voltage_query(self): #mV
