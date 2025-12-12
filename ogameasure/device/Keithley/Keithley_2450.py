@@ -33,24 +33,24 @@ class Keithley_2450(scpi.scpi_family):
         self.com.send("SOUR:FUNC VOLT\n")
         return
 
-    def limit_volt(self, limit): #mV
+    def limit_volt(self, limit): # mV
         limit = limit / 1000
         self.com.send("SOUR:VOLT:PROT PROT%f\n"%limit)
         return
 
-    def set_voltage(self, volt): #mV
+    def set_voltage(self, volt): # mV
         volt = volt / 1000
         self.com.send(":SOURce:VOLT %f\n"%volt)
         return
 
-    def current_query(self):
+    def current_query(self): # uA
         self.com.send(":MEASure:CURRent?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
-        ret = float(ret) * 1000
+        ret = float(ret) * 1000000
         return ret
     
-    def voltage_query(self): #mV
+    def voltage_query(self): # mV
         self.com.send(":MEASure:VOLTage?\n")
         time.sleep(delay_time)
         ret = self.com.readline()
