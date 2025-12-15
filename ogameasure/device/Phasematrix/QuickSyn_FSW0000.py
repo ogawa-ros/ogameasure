@@ -266,7 +266,7 @@ class FSW0000(scpi.scpi_family):
         return ret
 
     def check_status(self):
-        self.com.send("OUTP:STAT?\n")
+        self.com.send("STAT?\n")
         ret = self.com.readline()
         ret_10 = int(ret.strip(), 16)
         ret_bit = bin(ret_10).strip()
