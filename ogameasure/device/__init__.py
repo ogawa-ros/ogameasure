@@ -26,3 +26,16 @@ except ImportError:
         "and run `pip install gphoto2`"
     )
     pass
+
+try:
+    from . import Nikon
+except ImportError:
+    print(
+        "You can't import device.Nikon.D7100_raspi "
+        "because there isn't gphoto2 package."
+    )
+    print(
+        "Please install `libgphoto2` (C language package)"
+        "and run `pip install gphoto2`"
+    )
+    pass
