@@ -4,7 +4,7 @@ from pathlib import Path
 import gphoto2 as gp
 
 
-class d7100(object):
+class D7100(object):
     def capture(self, savepath):
         savedir = savepath
 
@@ -19,7 +19,6 @@ class d7100(object):
         try:
             gp.check_result(gp.gp_camera_init(camera, context))
 
-            # Nikon では RAM 保存のほうが通りやすい
             config = gp.check_result(gp.gp_camera_get_config(camera, context))
             capture_target = gp.check_result(
                 gp.gp_widget_get_child_by_name(config, "capturetarget")
@@ -32,8 +31,6 @@ class d7100(object):
                 gp.gp_camera_capture(camera, gp.GP_CAPTURE_IMAGE, context)
             )
 
-            # Nikon は capture 直後に file_get すると不安定なことがあるので少し待つ
-            # FILE_ADDED イベントが来たらそのファイルを使う
             downloaded_path = file_path
             for _ in range(20):
                 event_type, event_data = gp.check_result(
