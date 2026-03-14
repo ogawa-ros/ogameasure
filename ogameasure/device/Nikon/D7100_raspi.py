@@ -65,8 +65,8 @@ class D7100(object):
                 downloaded_path.folder,
                 downloaded_path.name,
                 gp.GP_FILE_TYPE_NORMAL,
-                context,
             )
+
             camera_file.save(savepath)
 
             return "Shooting completed"
