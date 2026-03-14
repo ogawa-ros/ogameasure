@@ -1,1 +1,1 @@
-from .D7100_raspi import d7100
+from .D7100_raspi import D7100
