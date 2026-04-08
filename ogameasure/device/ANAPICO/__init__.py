@@ -1,1 +1,1 @@
-from .APSYN420 import apsyn420
+from .APSYN420 import APSYN420
