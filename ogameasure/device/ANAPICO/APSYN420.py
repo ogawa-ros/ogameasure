@@ -1,28 +1,25 @@
 from __future__ import annotations
 
+import math
+
 from ..SCPI import scpi
-from ..communicator import ethernet
 
 delay_time = 0.1
 
 
 class APSYN420Error(RuntimeError):
-    """Base exception for APSYN420 communication/control errors."""
-
-
-class APSYN420ConnectionError(APSYN420Error):
-    """Raised when connection/open/close fails."""
+    """Base exception for APSYN420 control errors."""
 
 
 class APSYN420CommandError(APSYN420Error):
-    """Raised when send/recv/query or device state validation fails."""
+    """Raised when a command fails or a device state is invalid."""
 
 
 class InvalidRangeError(Exception):
     """Raised when the requested value is outside the supported range."""
 
 
-class apsyn420(scpi.scpi_family):
+class APSYN420(scpi.scpi_family):
     manufacturer = "ANAPICO"
     product_name = "APSYN420"
     classification = "Signal Generator"
@@ -33,35 +30,15 @@ class apsyn420(scpi.scpi_family):
     power_default_dbm = 0.0
     power_range_dbm = (-20.0, 23.0)
 
-    def __init__(self, host: str, port: int = 18, timeout: float = 1.0) -> None:
-        self.host = host
-        self.port = port
-        self.timeout = timeout
-
-        try:
-            com = ethernet(host=host, port=port, timeout=timeout)
-            com.open()
-        except Exception as exc:
-            raise APSYN420ConnectionError(
-                f"Failed to connect to APSYN420 ({host}:{port})"
-            ) from exc
-
-        super().__init__(com)
-
-    # --------------------
-    # Internal helper
-    # --------------------
     def _query(self, cmd: str) -> str:
         try:
             self.com.send(cmd)
             return self.com.readline().strip()
         except Exception as exc:
-            raise APSYN420CommandError(
-                f"Failed for command: {cmd}"
-            ) from exc
+            raise APSYN420CommandError(f"Failed for command: {cmd}") from exc
 
     # --------------------
-    # Basic ogameasure-style API
+    # ogameasure standard API
     # --------------------
     def freq_set(self, freq: float, unit: str = "GHz") -> None:
         self.com.send(f"FREQ:CW {freq:.10f} {unit}")
@@ -98,10 +75,7 @@ class apsyn420(scpi.scpi_family):
         raise APSYN420CommandError(f"Unexpected OUTP? response: {ret}")
 
     def close(self) -> None:
-        try:
-            self.com.close()
-        except Exception as exc:
-            raise APSYN420ConnectionError("Failed to close APSYN420 connection") from exc
+        self.com.close()
 
     # --------------------
     # IEEE-488.2 common commands
@@ -146,7 +120,7 @@ class apsyn420(scpi.scpi_family):
         self.com.send("*WAI")
 
     # --------------------
-    # Compatibility methods from your original APSYN420.py
+    # compatibility API from original APSYN420.py
     # --------------------
     def get_id(self) -> str:
         return self.idn_query()
@@ -156,15 +130,13 @@ class apsyn420(scpi.scpi_family):
 
     def set_ip(self, ip: str) -> bool:
         if not isinstance(ip, str):
-            raise APSYN420CommandError(
-                "set_ip_01: IPv4 address must be given as a string."
-            )
+            raise APSYN420CommandError("IPv4 address must be string.")
 
         self.com.send(f':SYSTem:COMMunicate:LAN:IP "{ip}"')
         res = self.get_ip()
         if ip != res:
             raise APSYN420CommandError(
-                f"set_ip_02: Failed to set IPv4 address. Current IP = {res}"
+                f"Failed to set IP address. Current IP = {res}"
             )
         return True
 
@@ -176,7 +148,7 @@ class apsyn420(scpi.scpi_family):
         res = self.get_lan_mode()
         if mode != res:
             raise APSYN420CommandError(
-                f"set_lan_mode_01: Failed to set LAN mode. Current mode = {res}"
+                f"Failed to set LAN mode. Current mode = {res}"
             )
         return True
 
@@ -201,6 +173,7 @@ class apsyn420(scpi.scpi_family):
             raise APSYN420CommandError(
                 'mode must be one of "CW", "FIXed", "SWEep", "LIST", "CHIRp".'
             )
+
         self.com.send(f":FREQuency:MODE {mode}")
         return True
 
@@ -211,25 +184,42 @@ class apsyn420(scpi.scpi_family):
         return self._query(":FREQuency?")
 
     def set_freq(self, freq: float = 1.0, unit: str = "GHz") -> bool:
-        unit_scale = {
+        scale = {
             "GHz": 1e9,
             "MHz": 1e6,
             "kHz": 1e3,
             "Hz": 1.0,
         }
-        if unit not in unit_scale:
+
+        if unit not in scale:
             raise APSYN420CommandError(
                 'unit must be one of "GHz", "MHz", "kHz", "Hz".'
             )
 
-        freq_hz = freq * unit_scale[unit]
+        freq_hz = freq * scale[unit]
         self.com.send(f":FREQuency {freq_hz:.3f}")
+
         res = float(self.get_freq())
         if freq_hz != res:
-            print(
-                f"[Caution] Actual frequency ({res:.3f} Hz) differs from requested "
-                f"value ({freq_hz:.3f} Hz)."
-            )
+            print(f"[Caution] requested={freq_hz:.3f}, actual={res:.3f}")
+
+        return True
+
+    def sweep_test1(
+        self, start: float, stop: float, step: float, unit: str = "GHz"
+    ) -> bool:
+        point = math.ceil((stop - start) / step)
+        i = 0
+
+        while i <= point:
+            freq = start + step * i
+            self.set_freq(freq, unit)
+            print(self.get_freq())
+            i += 1
+
+            if i < point:
+                input("Ready? : ")
+
         return True
 
     def get_power(self) -> str:
@@ -238,13 +228,13 @@ class apsyn420(scpi.scpi_family):
     def set_power(self, power: float = 1.0, unit: str = "dBm") -> bool:
         if unit != "dBm":
             raise APSYN420CommandError('unit must be "dBm".')
+
         self.com.send(f":POWer {power:f}")
         res = float(self.get_power())
+
         if power != res:
-            print(
-                f"[Caution] Actual power ({res:.3f} dBm) differs from requested "
-                f"value ({power:.3f} dBm)."
-            )
+            print(f"[Caution] requested={power:.3f}, actual={res:.3f}")
+
         return True
 
     def get_ref_ext_freq(self) -> str:
@@ -253,27 +243,26 @@ class apsyn420(scpi.scpi_family):
     def set_ref_ext_freq(self, ref_freq: float) -> bool:
         self.com.send(f":ROSCillator:EXTernal:FREQuency {ref_freq:.3f}")
         res = float(self.get_ref_ext_freq())
+
         if ref_freq != res:
-            print(
-                f"[Caution] Actual external reference frequency ({res:.3f} Hz) "
-                f"differs from requested value ({ref_freq:.3f} Hz)."
-            )
+            print(f"[Caution] requested={ref_freq:.3f}, actual={res:.3f}")
+
         return True
 
     def get_ref_locked(self) -> str:
         res = self._query(":ROSCillator:LOCKed?")
-        if res == "0":
-            return "OFF"
         if res == "1":
             return "ON"
+        if res == "0":
+            return "OFF"
         raise APSYN420CommandError(f"Unexpected ROSCillator:LOCKed? response: {res}")
 
     def get_ref_onoff(self) -> str:
         res = self._query(":ROSCillator:OUTPut?")
-        if res == "0":
-            return "OFF"
         if res == "1":
             return "ON"
+        if res == "0":
+            return "OFF"
         raise APSYN420CommandError(f"Unexpected ROSCillator:OUTPut? response: {res}")
 
     def ref_on(self) -> bool:
@@ -313,7 +302,7 @@ class apsyn420(scpi.scpi_family):
         self.rst()
         return True
 
-    def __enter__(self) -> "apsyn420":
+    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
