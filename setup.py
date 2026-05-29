@@ -16,7 +16,7 @@ setuptools.setup(
     license="MIT",
     keywords="",
     install_requires=[
-        "importlib-metadata; python_version < '3.8'",
+        "importlib-metadata; python_version >= '3.12'",
         "numpy",
         "pyserial",
     ],
