@@ -13,7 +13,7 @@ homepage = "https://github.com/ogawa-ros/ogameasure"
 
 [tool.poetry.dependencies]
 # Python 3.12（ROS Jazzy 前提）
-python = ">=3.12,<3.13"
+python = ">=3.10,<3.13"
 
 # Python 3.12 対応が保証される範囲
 numpy = ">=1.26.4,<3.0"
