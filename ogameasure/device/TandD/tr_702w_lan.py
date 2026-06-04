@@ -162,6 +162,15 @@ class tr_702w_lan(object):
             "net_ver": p.get("NETV",  b"").decode(errors="replace"),
         }
 
+    def get_mac_address(self) -> str | None:
+        """Retrieve the device MAC address (EBSTS).
+
+        Returns:
+            str: MAC address (e.g. "00:1A:2B:3C:4D:5E"), or None on failure.
+        """
+        status = self.get_status()
+        return status.get("mac") or None
+
     def get_status(self) -> dict:
         """Retrieve device runtime status (EBSTS).
 
