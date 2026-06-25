@@ -8,8 +8,7 @@ class tr_72nw_lan(object):
 
     通信方式:
       - ポート 57172 固定、認証なし
-      - TR-7nw はコマンド応答後にセッションを切断するため、
-        コマンドごとに TCP 接続を open → send → recv → close する
+      - 仕様書 3.4: 連続通信時は LAN を切断しない。接続は close() まで維持する。
       - コマンドフレーム:
           SerialNo(4,LE) + CmdSize(2,LE)
           + SOH(0x01) + Cmd(1) + SubCmd(0x00) + DataLen(2,LE) + Data + SUM(2,LE)
@@ -71,18 +70,12 @@ class tr_72nw_lan(object):
     def _query(self, command: int, data: bytes = b"\x00\x00\x00\x00") -> tuple[bool, bytes]:
         """コマンドを送信して応答を受信する。
 
-        TR-7nw は応答後にセッションを切断するため、毎回 open/close する。
+        仕様書 3.4: 連続通信時は接続を維持する。未接続時のみ open する。
         """
         self.com.open()
-        try:
-            self.com.send_raw(self._build_cmd(command, data))
-            raw = self.com.recv()
-            return self._parse_response(raw)
-        finally:
-            try:
-                self.com.close()
-            except Exception:
-                pass
+        self.com.send_raw(self._build_cmd(command, data))
+        raw = self.com.recv()
+        return self._parse_response(raw)
 
     # ------------------------------------------------------------------ #
     # Measurement  (tr_73u / tr_702w_lan 互換)
@@ -92,14 +85,13 @@ class tr_72nw_lan(object):
         """現在値読み取り (コマンド 0x33)。
 
         TR-72nw: CH1=温度、CH2=湿度
-        生データ変換式: (raw - 1000) / 10
+        生データ変換式: (raw - 1000) / 10。raw == 0xEEEE はセンサエラー。
 
         Returns:
             dict:
-                temp_c : float  温度 [°C]
-                temp_k : float  温度 [K] (絶対温度)
+                temp_k : float  温度 [K]
                 humid  : float  相対湿度 [%RH]
-            None on failure.
+            None on sensor error or failure.
         """
         ok, payload = self._query(0x33)
         if not ok or len(payload) < 4:
@@ -108,12 +100,12 @@ class tr_72nw_lan(object):
         ch1_raw = struct.unpack_from("<H", payload, 0)[0]
         ch2_raw = struct.unpack_from("<H", payload, 2)[0]
 
-        temp_c = (ch1_raw - 1000) / 10.0
-        humid  = (ch2_raw - 1000) / 10.0
+        if ch1_raw == 0xEEEE or ch2_raw == 0xEEEE:
+            return None
+
         return {
-            "temp_c": temp_c,
-            "temp_k": round(temp_c + 273.15, 2),
-            "humid":  humid,
+            "temp_k": round((ch1_raw - 1000) / 10.0 + 273.15, 2),
+            "humid":  (ch2_raw - 1000) / 10.0,
         }
 
     # ------------------------------------------------------------------ #
