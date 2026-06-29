@@ -204,6 +204,8 @@ class tr_72nw_lan(object):
             raise ValueError(f"settings must be 64 bytes, got {len(settings)}")
         data = struct.pack("<H", address) + settings
         ok, _ = self._query(0x6C, data)
+        if not ok:
+            raise RuntimeError("設定の書き込みが拒否されました。記録中の場合は stop_recording() を先に呼んでください。")
         return ok
 
     # ------------------------------------------------------------------ #
@@ -273,6 +275,8 @@ class tr_72nw_lan(object):
         table[42] = 0x00   # 記録開始状態: 0=即時
         table[43] = 0x00   # 記録モード: 0x00=エンドレス
         ok, _ = self._query(0x3D, bytes(table))
+        if not ok:
+            raise RuntimeError("記録の開始が拒否されました。すでに記録中の場合は stop_recording() を先に呼んでください。")
         return ok
 
     def stop_recording(self) -> bool:
