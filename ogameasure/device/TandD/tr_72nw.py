@@ -3,7 +3,7 @@
 import struct
 
 
-class tr_72nw_lan(object):
+class tr_72nw(object):
     """TR-7nw (TR-72NW) LAN リモートコントロールドライバ。
 
     通信方式:
@@ -89,8 +89,8 @@ class tr_72nw_lan(object):
 
         Returns:
             dict:
-                temp_k : float  温度 [K]
-                humid  : float  相対湿度 [%RH]
+                temp  : float  温度 [°C]
+                humid : float  相対湿度 [%RH]
             None on sensor error or failure.
         """
         ok, payload = self._query(0x33)
@@ -104,8 +104,8 @@ class tr_72nw_lan(object):
             return None
 
         return {
-            "temp_k": round((ch1_raw - 1000) / 10.0 + 273.15, 2),
-            "humid":  (ch2_raw - 1000) / 10.0,
+            "temp":  (ch1_raw - 1000) / 10.0,
+            "humid": (ch2_raw - 1000) / 10.0,
         }
 
     # ------------------------------------------------------------------ #

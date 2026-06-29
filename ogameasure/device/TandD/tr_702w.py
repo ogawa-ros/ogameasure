@@ -4,7 +4,7 @@ import time
 import struct
 
 
-class tr_702w_lan(object):
+class tr_702w(object):
 
     SENSOR_ERROR_RAW = 0xEEEE
 
@@ -105,9 +105,8 @@ class tr_702w_lan(object):
 
         Returns:
             dict with keys:
-                temp_c : float  temperature in Celsius
-                temp_k : float  temperature in Kelvin (absolute)
-                humid  : float  relative humidity in %
+                temp  : float  temperature in Celsius [°C]
+                humid : float  relative humidity [%RH]
             None if either channel reports a sensor error (0xEEEE).
 
         Raises:
@@ -134,12 +133,9 @@ class tr_702w_lan(object):
         if ch1_raw == self.SENSOR_ERROR_RAW or ch2_raw == self.SENSOR_ERROR_RAW:
             return None
 
-        temp_c = (ch1_raw - 1000) / 10.0
-        humid  = (ch2_raw - 1000) / 10.0
         return {
-            "temp_c": temp_c,
-            "temp_k": round(temp_c + 273.15, 2),
-            "humid":  humid,
+            "temp":  (ch1_raw - 1000) / 10.0,
+            "humid": (ch2_raw - 1000) / 10.0,
         }
 
     # ------------------------------------------------------------------ #
