@@ -1,73 +1,85 @@
-from __future__ import print_function
 import logging
-import os
-import subprocess
-import sys
-import gphoto2 as gp
 import time
-import socket
+from pathlib import Path
 
-# time1 = time.ctime()
-# time2 = time.strptime(time1)
-# time3 = time.strftime('%Y%m%d_%H.%M.%S', time2)
-timestr = time.strftime("%Y%m%d_%H.%M.%S", time.strptime(time.ctime()))
-
-# savedir_pre = '/home/1.85m/evaluation/optical_pointing/test/fig/'
-
-HOST = "192.168.100.12"
-PORT = 50000
-
-# def capture(savedir, imagename):
-# f = open('%s%s'%(savedir, imagename), 'w')
-# f.write('test')
-# f.close()
+import gphoto2 as gp
 
 
-class m100(object):
-    def capture(self, savepath):
-        # savedir = './picture/'+timestr+'.JPG'
-        savedir = savepath
+class m100:
+    def __init__(self):
         logging.basicConfig(
-            format="%(levelname)s: %(name)s: %(massage)s", level=logging.WARNING
+            format="%(levelname)s: %(name)s: %(message)s",
+            level=logging.WARNING,
         )
         gp.check_result(gp.use_python_logging())
-        camera = gp.check_result(gp.gp_camera_new())
-        gp.check_result(gp.gp_camera_init(camera))
+
+        self.camera = gp.check_result(gp.gp_camera_new())
+        gp.check_result(gp.gp_camera_init(self.camera))
+
+        print("Canon M100 connected")
+
+    def capture(self, savepath):
+        savepath = Path(savepath).expanduser()
+        savepath.parent.mkdir(parents=True, exist_ok=True)
+
         print("Capturing image")
-        file_path = gp.check_result(gp.gp_camera_capture(camera, gp.GP_CAPTURE_IMAGE))
-        # print('Camera file path: {0}/{1}'.format(file_path.folder, file_path.name))
-        # target = os.path.join(savedir, imagename)
-        # print('Copying image to', target)
-        camera_file = gp.check_result(
-            gp.gp_camera_file_get(
-                camera, file_path.folder, file_path.name, gp.GP_FILE_TYPE_NORMAL
+
+        file_path = gp.check_result(
+            gp.gp_camera_capture(
+                self.camera,
+                gp.GP_CAPTURE_IMAGE,
             )
         )
-        # gp.check_result(gp.gp_file_save(camera_file, target))
-        # timestr = time.strftime('%Y%m%d_%H.%M.%S', time.strptime(time.ctime()))
-        gp.check_result(gp.gp_file_save(camera_file, savedir))
-        # gp.check_result(gp.gp_file_save(camera_file, './picture/'+timestr+'.jpg'))
-        # subprocess.call(['xdg-open', target])
-        gp.check_result(gp.gp_camera_exit(camera))
+
+        camera_file = gp.check_result(
+            gp.gp_camera_file_get(
+                self.camera,
+                file_path.folder,
+                file_path.name,
+                gp.GP_FILE_TYPE_NORMAL,
+            )
+        )
+
+        gp.check_result(gp.gp_file_save(camera_file, str(savepath)))
+
+        # Drain the camera's post-capture events (e.g. file-added
+        # notifications) so they don't linger and interfere with the next
+        # capture on this same session.
+        for _ in range(30):
+            event_type, _ = gp.check_result(
+                gp.gp_camera_wait_for_event(
+                    self.camera,
+                    100,
+                )
+            )
+            if event_type == gp.GP_EVENT_TIMEOUT:
+                break
+
+        print(f"Saved: {savepath}")
         return "Shooting completed"
-        # return 0
 
+    def keepalive(self):
+        # Waits for camera events for only 100 ms; a lightweight way to poll
+        # the existing session without tearing it down. Do not call this
+        # concurrently with capture().
+        gp.check_result(
+            gp.gp_camera_wait_for_event(
+                self.camera,
+                100,
+            )
+        )
 
-"""
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((HOST, PORT))
-s.listen(1)
-print('Server is listening for connections')
+    def close(self):
+        for _ in range(10):
+            result = gp.gp_camera_exit(self.camera)
 
-While True:
-    conn, addr = s.accept()
-    print('connected')
-    capture()
-    bytes = open('./picture/'+timestr+'.JPG', encoding='utf8', errors='ignore').read()
-    print(len(bytes), 'bytes')
-    bytes += '¥n'
-    _file = open('./picture/'+timestr+'.JPG', 'wb')
-    _file.write(bytes)
-    _file.close()
-    conn.send(bytes)
-"""
+            if result >= gp.GP_OK:
+                print("Canon M100 disconnected")
+                return
+
+            if result != gp.GP_ERROR_CAMERA_BUSY:
+                gp.check_result(result)
+
+            time.sleep(0.5)
+
+        logging.warning("Camera remained busy during shutdown")
