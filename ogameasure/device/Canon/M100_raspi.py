@@ -58,17 +58,6 @@ class m100:
         print(f"Saved: {savepath}")
         return "Shooting completed"
 
-    def keepalive(self):
-        # Waits for camera events for only 100 ms; a lightweight way to poll
-        # the existing session without tearing it down. Do not call this
-        # concurrently with capture().
-        gp.check_result(
-            gp.gp_camera_wait_for_event(
-                self.camera,
-                100,
-            )
-        )
-
     def close(self):
         for _ in range(10):
             result = gp.gp_camera_exit(self.camera)
