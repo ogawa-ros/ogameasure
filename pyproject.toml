@@ -20,7 +20,7 @@ numpy = ">=1.26.4,<3.0"
 pyserial = "^3.5"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0"
+pytest = ">=8,<10"
 
 [build-system]
 requires = ["poetry-core>=1.8.0"]
