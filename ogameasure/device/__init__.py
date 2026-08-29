@@ -14,6 +14,7 @@ from . import Pfeiffer
 from . import Phasematrix
 from . import SENA
 from . import TandD
+from . import Keithley
 
 try:
     from . import Canon
